@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using AlterEgo.Core.Domains;
 
 namespace Tester
@@ -7,10 +8,16 @@ namespace Tester
     {
         static void Main(string[] args)
         {
-            var image = new Image();
-
-
-            Console.WriteLine("Hello World!");
+            try
+            {
+                var user = new User("mk4e1446s", "passs", "salt", "supak", "elo@wp.pl");
+                var image = new Image("", user, TimeSpan.FromMinutes(5));
+                Console.WriteLine(image);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
