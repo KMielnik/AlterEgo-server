@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AlterEgo.Core.Domains
 {
@@ -44,8 +39,6 @@ namespace AlterEgo.Core.Domains
             {
                 (null, _) => throw new ArgumentNullException(nameof(password)),
                 (_, null) => throw new ArgumentNullException(nameof(salt)),
-                ({ Length: < 5 or > 30 }, _) => throw new ArgumentException(
-                    "Length must be between 5 and 30 characters.", nameof(password)),
                 _ => (password, salt),
             };
 

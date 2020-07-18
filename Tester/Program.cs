@@ -11,7 +11,7 @@ namespace Tester
             try
             {
                 var user = new User("mk4e1446s", "passs", "salt", "supak", "elo@wp.pl");
-                var image = new Image("", user, TimeSpan.FromMinutes(5));
+                var image = new Image("dd", user, TimeSpan.FromMinutes(5));
                 Console.WriteLine(image);
             }
             catch(Exception ex)
