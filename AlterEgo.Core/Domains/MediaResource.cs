@@ -9,11 +9,11 @@ namespace AlterEgo.Core.Domains
 {
     public abstract class MediaResource
     {
-        public string Filename { get; private set; }
-        public User Owner { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime PlannedDeletion { get; private set; }
-        public DateTime? ActualDeletion { get; private set; }
+        public string Filename { get; protected set; }
+        public User Owner { get; protected set; }
+        public DateTime CreatedAt { get; protected set; }
+        public DateTime PlannedDeletion { get; protected set; }
+        public DateTime? ActualDeletion { get; protected set; }
 
         public MediaResource(string filename, User owner, TimeSpan plannedLifetime)
         {

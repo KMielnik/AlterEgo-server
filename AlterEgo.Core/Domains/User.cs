@@ -71,5 +71,11 @@ namespace AlterEgo.Core.Domains
 
         public override string ToString()
             => $"{{User: {{Login: {Login}}}, {{Mail: {Mail}}}}}";
+
+        public override bool Equals(object obj)
+            => obj is User u && u.Login == Login;
+
+        public override int GetHashCode()
+            => Login.GetHashCode();
     }
 }
