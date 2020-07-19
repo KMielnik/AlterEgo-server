@@ -11,6 +11,7 @@ namespace AlterEgo.Core.Domains
             Done,
         }
 
+        public Guid Id { get; protected set; }
         public User Owner { get; protected set; }
         public DrivingVideo SourceVideo { get; protected set; }
         public Image SourceImage { get; protected set; }
@@ -20,6 +21,8 @@ namespace AlterEgo.Core.Domains
 
         public AnimationTask(User owner, DrivingVideo sourceVideo, Image sourceImage, ResultVideo resultAnimation)
         {
+            Id = Guid.NewGuid();
+
             SetOwner(owner);
             SetSourceVideo(sourceVideo);
             SetSourceImage(sourceImage);
