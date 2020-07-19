@@ -9,4 +9,9 @@
     <ProjectReference Include="..\AlterEgo.Core\AlterEgo.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Network\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
