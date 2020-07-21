@@ -8,7 +8,7 @@ namespace AlterEgo.Core.Helpers
 {
     public class ProcessAsyncHelper
     {
-        public static async IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command, int? timeout = null)
+        public static IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command, int? timeout = null)
         {
             throw new NotImplementedException();
         }
