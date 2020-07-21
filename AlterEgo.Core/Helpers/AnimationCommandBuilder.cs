@@ -14,7 +14,7 @@ namespace AlterEgo.Core.Helpers
         private enum EnviromentTypes { Python, Docker}
 
         private EnviromentTypes _type = default;
-        private string _dockerImageName = default;
+        private string _startingPythonFile = default;
 
         private string _executablePath = null;
         private string _imagesDirectoryPath = null;
@@ -48,25 +48,27 @@ namespace AlterEgo.Core.Helpers
                     _tempDirectoryPath is null)
                     throw new Exception();
 
-                argumentsBuilder.Append($" -v {_imagesDirectoryPath}:/AlterEgo-core/images ");
-                argumentsBuilder.Append($" -v {_videosDirectoryPath}:/AlterEgo-core/videos ");
-                argumentsBuilder.Append($" -v {_outputDirectoryPath}:/AlterEgo-core/output ");
-                argumentsBuilder.Append($" -v {_tempDirectoryPath}:/AlterEgo-core/temp ");
+                argumentsBuilder.Append($" -v \"{_imagesDirectoryPath}\":/AlterEgo-core/images ");
+                argumentsBuilder.Append($" -v \"{_videosDirectoryPath}\":/AlterEgo-core/videos ");
+                argumentsBuilder.Append($" -v \"{_outputDirectoryPath}\":/AlterEgo-core/output ");
+                argumentsBuilder.Append($" -v \"{_tempDirectoryPath}\":/AlterEgo-core/temp ");
 
-                argumentsBuilder.Append($" {_dockerImageName} ");
+                argumentsBuilder.Append($" {_startingPythonFile} ");
 
                 argumentsBuilder.Append(" python3 ");
             }
 
-            argumentsBuilder.Append(" run.py ");
+            argumentsBuilder.Append($" {(_type == EnviromentTypes.Python ? _startingPythonFile : "run.py")} ");
 
             if (_video is null)
                 throw new Exception();
 
-            argumentsBuilder.Append($" --driving_video {_video.Filename} ");
+            argumentsBuilder.Append($" --driving_video \"{(_type == EnviromentTypes.Python ? Path.Combine(_videosDirectoryPath, _video.Filename) : _video.Filename)}\" ");
 
-            _images.Aggregate(argumentsBuilder.Append(" --source_image "), (acc, image) => acc.Append($" {(_type == EnviromentTypes.Python ? image.Filename : image.Filename)} "));
-            _resultVideos.Aggregate(argumentsBuilder.Append(" --result_video "), (acc, video) => acc.Append($" {(_type == EnviromentTypes.Python ? video.Filename : video.Filename)} "));
+            _images.Aggregate(argumentsBuilder.Append(" --source_image "), 
+                (acc, image) => acc.Append($" \"{(_type == EnviromentTypes.Python ? Path.Combine(_imagesDirectoryPath, image.Filename) : image.Filename)}\" "));
+            _resultVideos.Aggregate(argumentsBuilder.Append(" --result_video "), 
+                (acc, video) => acc.Append($" \"{(_type == EnviromentTypes.Python ? Path.Combine(_outputDirectoryPath, video.Filename) : video.Filename)}\" "));
 
             if (_withAudio)
                 argumentsBuilder.Append(" --audio ");
@@ -80,6 +82,7 @@ namespace AlterEgo.Core.Helpers
             if(_withGPUSupport)
                 argumentsBuilder.Append(" --crop --find_best_frame");
 
+            argumentsBuilder.Append(" --api ");
 
             return (_executablePath, argumentsBuilder.ToString());
         }
@@ -87,12 +90,12 @@ namespace AlterEgo.Core.Helpers
         private AnimationCommandBuilder(EnviromentTypes type)
             => _type = type;
 
-        private AnimationCommandBuilder(EnviromentTypes type, string dockerImageName) : this(type)
-            => _dockerImageName = dockerImageName;
+        private AnimationCommandBuilder(EnviromentTypes type, string startPointPath) : this(type)
+            => _startingPythonFile = startPointPath;
         
 
-        public static IEnviromentBuilder UsingPython()
-            => new AnimationCommandBuilder(EnviromentTypes.Python);
+        public static IEnviromentBuilder UsingPython(string corePath)
+            => new AnimationCommandBuilder(EnviromentTypes.Python, corePath);
 
         public static IEnviromentBuilder UsingDocker(string dockerImageName)
             => new AnimationCommandBuilder(EnviromentTypes.Docker, dockerImageName);
