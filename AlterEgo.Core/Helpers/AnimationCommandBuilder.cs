@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -93,9 +94,8 @@ namespace AlterEgo.Core.Helpers
         private AnimationCommandBuilder(EnviromentTypes type, string startPointPath) : this(type)
             => _startingPythonFile = startPointPath;
         
-
         public static IEnviromentBuilder UsingPython(string corePath)
-            => new AnimationCommandBuilder(EnviromentTypes.Python, corePath);
+            => new AnimationCommandBuilder(EnviromentTypes.Python, Path.GetFullPath(corePath));
 
         public static IEnviromentBuilder UsingDocker(string dockerImageName)
             => new AnimationCommandBuilder(EnviromentTypes.Docker, dockerImageName);
@@ -125,6 +125,11 @@ namespace AlterEgo.Core.Helpers
             _video = video;
             return this;
         }
+
+        public IEnviromentBuilder WithExecutablePath()
+            => this.WithExecutablePath(_type == EnviromentTypes.Docker ?
+                "docker" :
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "python" : "python3");
 
         public IEnviromentBuilder WithExecutablePath(string path)
         {
@@ -176,6 +181,7 @@ namespace AlterEgo.Core.Helpers
 
     public interface IEnviromentBuilder
     {
+        IEnviromentBuilder WithExecutablePath();
         IEnviromentBuilder WithExecutablePath(string path);
 
         IEnviromentBuilder WithImagesDirectory(string path);

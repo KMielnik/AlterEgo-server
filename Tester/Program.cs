@@ -17,11 +17,11 @@ namespace Tester
                 var video = new DrivingVideo("a.mp4", user, TimeSpan.Zero);
                 var image = new Image("a.jpg", user, TimeSpan.Zero);
                 var image2 = new Image("a.jpg", user, TimeSpan.Zero);
-                var result = new ResultVideo("output.mp4", user, TimeSpan.Zero);
+                var result = new ResultVideo("Output.mp4", user, TimeSpan.Zero);
                 var result2 = new ResultVideo("outputto.mp4", user, TimeSpan.Zero);
 
-                var elo = AnimationCommandBuilder.UsingDocker("kamilmielnik/alterego-core:2.0.4")
-                    .WithExecutablePath("docker")
+                var elo = AnimationCommandBuilder.UsingPython("python/run.py")
+                    .WithExecutablePath()
                     .WithImagesDirectory("images")
                     .WithVideosDirectory("videos")
                     .WithTempDirectory("temp")
@@ -33,11 +33,9 @@ namespace Tester
                     .WithAudio()
                     .Build();
 
-                Console.WriteLine($"{elo.path} {elo.arguments.ToLower()}");
+                Console.WriteLine($"{elo.path} {elo.arguments}");
 
-                var process = Process.Start(elo.path, elo.arguments);
-                
-                process.WaitForExit();
+                Process.Start(elo.path, elo.arguments).WaitForExit();
             }
             catch(Exception ex)
             {
