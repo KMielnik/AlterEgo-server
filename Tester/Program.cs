@@ -26,7 +26,7 @@ namespace Tester
                 var task1 = new AnimationTask(user, video, image, result);
                 var task2 = new AnimationTask(user, video, image2, result2);
 
-                await foreach (var task in animator.Animate(task1,task2))
+                await foreach (var task in animator.Animate(task1))
                 {
                     Console.WriteLine(task.SourceImage);
                 }

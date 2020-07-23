@@ -1,5 +1,6 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Infrastucture.Exceptions;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +29,7 @@ namespace AlterEgo.Infrastucture.Services
 
             await foreach (var ev in RunAnimationProcessAsync(command))
             {
-                //TODO: task returning
+                Console.WriteLine(ev.EventType.Name);
             }
 
             foreach (var task in tasks)
@@ -37,7 +38,7 @@ namespace AlterEgo.Infrastucture.Services
 
         private IOptionsCommandBuilder GetPreconfiguredBuilder()
         {
-            return AnimationCommandBuilder.UsingPython("python/dummy.py")
+            return AnimationCommandBuilder.UsingDocker("kamilmielnik/alterego-core:2.0.4")
                 .WithExecutablePath()
                 .WithImagesDirectory("images")
                 .WithVideosDirectory("videos")
@@ -47,7 +48,7 @@ namespace AlterEgo.Infrastucture.Services
                 .WithAudio();
         }
 
-        private async IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command, int? timeout = null)
+        private async IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command)
         {
             using var process = new Process
             {
@@ -69,8 +70,7 @@ namespace AlterEgo.Infrastucture.Services
             process.Exited += (_, e) => processCloseEvent.TrySetResult();
 
             DataReceivedEventHandler handleOutputEvent(TaskCompletionSource closeEvent)
-            {
-                return (_, e) =>
+                => (_, e) =>
                 {
                     if (e.Data is null)
                         closeEvent.TrySetResult();
@@ -87,7 +87,7 @@ namespace AlterEgo.Infrastucture.Services
                         }
                     }
                 };
-            }
+            
 
             var outputCloseEvent = new TaskCompletionSource();
             process.OutputDataReceived += handleOutputEvent(outputCloseEvent);
@@ -107,15 +107,14 @@ namespace AlterEgo.Infrastucture.Services
                 outputCloseEvent.Task,
                 errorCloseEvent.Task);
 
-            var awaitingTask = timeout.HasValue
-                ? Task.WhenAny(Task.Delay(timeout.Value), processFinishedTask)
-                : Task.WhenAny(processFinishedTask);
-
-            if (await awaitingTask == processFinishedTask)
+            while(await Task.WhenAny(processFinishedTask, Task.Delay(500)) != processFinishedTask)
+            {
                 while (eventsQueue.Count > 0)
                     yield return eventsQueue.Dequeue();
-            else
-                process.Kill();
+            }
+
+            while (eventsQueue.Count > 0)
+                yield return eventsQueue.Dequeue();
         }
 
         private class OutputEvent
