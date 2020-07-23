@@ -1,4 +1,5 @@
 ﻿using AlterEgo.Core.Domains;
+using AlterEgo.Infrastucture.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,34 +14,37 @@ namespace AlterEgo.Infrastucture.Services
 {
     public class Animator : IAnimator
     {
-        public async Task<AnimationTask> Animate(AnimationTask task)
+        public async IAsyncEnumerable<AnimationTask> Animate(params AnimationTask[] tasks)
         {
-            var user = new User("login", "password", "salt", "Agatka", "elo@wp.pl");
-            var video = new DrivingVideo("a.mp4", user, TimeSpan.Zero);
-            var image = new Image("a.jpg", user, TimeSpan.Zero);
-            var image2 = new Image("a.jpg", user, TimeSpan.Zero);
-            var result = new ResultVideo("Output.mp4", user, TimeSpan.Zero);
-            var result2 = new ResultVideo("outputto.mp4", user, TimeSpan.Zero);
+            var builder = GetPreconfiguredBuilder();
 
-            var elo = AnimationCommandBuilder.UsingDocker("kamilmielnik/alterego-core:2.0.4")
+            foreach (var task in tasks)
+            {
+                builder.WithDrivingVideo(task.SourceVideo)
+                    .AddResultAnimation(task.SourceImage, task.ResultAnimation);
+            }
+
+            var command = builder.Build();
+
+            await foreach (var ev in RunAnimationProcessAsync(command))
+            {
+                //TODO: task returning
+            }
+
+            foreach (var task in tasks)
+                yield return task;
+        }
+
+        private IOptionsCommandBuilder GetPreconfiguredBuilder()
+        {
+            return AnimationCommandBuilder.UsingPython("python/dummy.py")
                 .WithExecutablePath()
                 .WithImagesDirectory("images")
                 .WithVideosDirectory("videos")
                 .WithTempDirectory("temp")
                 .WithOutputDirectory("out put")
                 .WithParameters()
-                .WithDrivingVideo(video)
-                .AddResultAnimation(image, result)
-                .WithAudio()
-                .Build();
-            Console.WriteLine(elo.path + " " + elo.arguments);
-
-            await foreach(var el in RunAnimationProcessAsync(elo))
-            {
-                Console.WriteLine(el.EventType.Text);
-            }
-
-            return task;
+                .WithAudio();
         }
 
         private async IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command, int? timeout = null)
@@ -54,8 +58,9 @@ namespace AlterEgo.Infrastucture.Services
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
-                }
+                    CreateNoWindow = true,
+                },
+                EnableRaisingEvents = true,
             };
 
             var eventsQueue = new Queue<OutputEvent>();
@@ -63,7 +68,7 @@ namespace AlterEgo.Infrastucture.Services
             var processCloseEvent = new TaskCompletionSource();
             process.Exited += (_, e) => processCloseEvent.TrySetResult();
 
-            Func<TaskCompletionSource, DataReceivedEventHandler> handleOutputEvent = (closeEvent) =>
+            DataReceivedEventHandler handleOutputEvent(TaskCompletionSource closeEvent)
             {
                 return (_, e) =>
                 {
@@ -78,12 +83,11 @@ namespace AlterEgo.Infrastucture.Services
                         }
                         catch (JsonException ex)
                         {
-                            //TODO: exceptions in animator
-                            Console.WriteLine(ex.Message);
+                            throw new ProcessingAnimationFailedException("Process did not return proper outputevent JSON", ex, e.Data);
                         }
                     }
                 };
-            };
+            }
 
             var outputCloseEvent = new TaskCompletionSource();
             process.OutputDataReceived += handleOutputEvent(outputCloseEvent);
@@ -93,7 +97,7 @@ namespace AlterEgo.Infrastucture.Services
 
             var isProcessStarted = process.Start();
             if (!isProcessStarted)
-                throw new Exception("fail");
+                throw new ApplicationException("Cannot start the animation processing process");
 
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -128,7 +132,7 @@ namespace AlterEgo.Infrastucture.Services
             public string Text { get; init; }
         }
 
-        public class AnimationCommandBuilder : IEnviromentBuilder, IDrivingVideoCommandBuilder, IOptionsCommandBuilder
+        public class AnimationCommandBuilder : IEnviromentBuilder, IOptionsCommandBuilder
         {
             private enum EnviromentTypes { Python, Docker }
 
@@ -161,11 +165,14 @@ namespace AlterEgo.Infrastucture.Services
                     if (_withGPUSupport)
                         argumentsBuilder.Append(" --gpus all ");
 
-                    if (_imagesDirectoryPath is null ||
-                        _videosDirectoryPath is null ||
-                        _outputDirectoryPath is null ||
-                        _tempDirectoryPath is null)
-                        throw new Exception();
+                    if (_imagesDirectoryPath is null)
+                        throw new RequiredParameterMissingException(nameof(_imagesDirectoryPath));
+                    if (_videosDirectoryPath is null)
+                        throw new RequiredParameterMissingException(nameof(_videosDirectoryPath));
+                    if (_outputDirectoryPath is null)
+                        throw new RequiredParameterMissingException(nameof(_outputDirectoryPath));
+                    if (_tempDirectoryPath is null)
+                        throw new RequiredParameterMissingException(nameof(_tempDirectoryPath));
 
                     argumentsBuilder.Append($" -v \"{_imagesDirectoryPath}\":/AlterEgo-core/images ");
                     argumentsBuilder.Append($" -v \"{_videosDirectoryPath}\":/AlterEgo-core/videos ");
@@ -180,7 +187,7 @@ namespace AlterEgo.Infrastucture.Services
                 argumentsBuilder.Append($" \"{(_type == EnviromentTypes.Python ? _startingPythonFile : "run.py")}\" ");
 
                 if (_video is null)
-                    throw new Exception();
+                    throw new RequiredParameterMissingException(nameof(_video));
 
                 argumentsBuilder.Append($" --driving_video \"{(_type == EnviromentTypes.Python ? Path.Combine(_videosDirectoryPath, _video.Filename) : _video.Filename)}\" ");
 
@@ -220,6 +227,11 @@ namespace AlterEgo.Infrastucture.Services
 
             public IOptionsCommandBuilder AddResultAnimation(Image image, ResultVideo resultVideo)
             {
+                if(image is null)
+                    throw new ArgumentNullException(nameof(image));
+                if (resultVideo is null)
+                    throw new ArgumentNullException(nameof(resultVideo));
+
                 _images.Add(image);
                 _resultVideos.Add(resultVideo);
 
@@ -240,6 +252,9 @@ namespace AlterEgo.Infrastucture.Services
 
             public IOptionsCommandBuilder WithDrivingVideo(DrivingVideo video)
             {
+                if (video is null)
+                    throw new ArgumentNullException(nameof(video));
+
                 _video = video;
                 return this;
             }
@@ -251,6 +266,7 @@ namespace AlterEgo.Infrastucture.Services
 
             public IEnviromentBuilder WithExecutablePath(string path)
             {
+
                 _executablePath = path;
                 return this;
             }
@@ -279,7 +295,7 @@ namespace AlterEgo.Infrastucture.Services
                 return this;
             }
 
-            public IDrivingVideoCommandBuilder WithParameters()
+            public IOptionsCommandBuilder WithParameters()
             {
                 return this;
             }
@@ -307,16 +323,12 @@ namespace AlterEgo.Infrastucture.Services
             IEnviromentBuilder WithOutputDirectory(string path);
             IEnviromentBuilder WithTempDirectory(string path);
 
-            IDrivingVideoCommandBuilder WithParameters();
-        }
-
-        public interface IDrivingVideoCommandBuilder
-        {
-            IOptionsCommandBuilder WithDrivingVideo(DrivingVideo video);
+            IOptionsCommandBuilder WithParameters();
         }
 
         public interface IOptionsCommandBuilder
         {
+            IOptionsCommandBuilder WithDrivingVideo(DrivingVideo video);
             IOptionsCommandBuilder AddResultAnimation(Image image, ResultVideo resultVideo);
             IOptionsCommandBuilder WithGPUSupport();
             IOptionsCommandBuilder WithCustomImagePadding(float padding);

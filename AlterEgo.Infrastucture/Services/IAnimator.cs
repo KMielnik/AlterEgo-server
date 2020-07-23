@@ -11,6 +11,6 @@ namespace AlterEgo.Infrastucture.Services
 {
     public interface IAnimator
     {
-        Task<AnimationTask> Animate(AnimationTask task);
+        IAsyncEnumerable<AnimationTask> Animate(params AnimationTask[] tasks);
     }
 }

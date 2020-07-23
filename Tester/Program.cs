@@ -15,11 +15,25 @@ namespace Tester
             try
             {
                 var animator = new Animator();
-                await animator.Animate(null);
+
+                var user = new User("login", "password", "salt", "Agatka", "elo@wp.pl");
+                var video = new DrivingVideo("a.mp4", user, TimeSpan.Zero);
+                var image = new Image("a.jpg", user, TimeSpan.Zero);
+                var image2 = new Image("a.jpg", user, TimeSpan.Zero);
+                var result = new ResultVideo("Output.mp4", user, TimeSpan.Zero);
+                var result2 = new ResultVideo("outputto.mp4", user, TimeSpan.Zero);
+
+                var task1 = new AnimationTask(user, video, image, result);
+                var task2 = new AnimationTask(user, video, image2, result2);
+
+                await foreach (var task in animator.Animate(task1,task2))
+                {
+                    Console.WriteLine(task.SourceImage);
+                }
             }
-            catch(Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Eee");
             }
         }
     }
