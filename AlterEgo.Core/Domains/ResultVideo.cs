@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlterEgo.Core.Domains.Common;
+using System;
 
 namespace AlterEgo.Core.Domains
 {

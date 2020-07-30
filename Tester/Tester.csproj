@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AlterEgo.Core\AlterEgo.Core.csproj" />
+    <ProjectReference Include="..\AlterEgo.Infrastucture\AlterEgo.Infrastucture.csproj" />
   </ItemGroup>
 
 </Project>

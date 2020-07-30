@@ -1,11 +1,8 @@
 ﻿using AlterEgo.Core.Domains;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Core.Repositories
+namespace AlterEgo.Core.Interfaces.Repositories
 {
     public interface IResultVideoRepository
     {

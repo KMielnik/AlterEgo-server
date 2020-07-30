@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace AlterEgo.Core.Domains
+namespace AlterEgo.Core.Domains.Common
 {
     public abstract class MediaResource
     {

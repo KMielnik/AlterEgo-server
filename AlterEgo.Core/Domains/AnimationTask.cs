@@ -16,10 +16,12 @@ namespace AlterEgo.Core.Domains
         public DrivingVideo SourceVideo { get; protected set; }
         public Image SourceImage { get; protected set; }
         public ResultVideo ResultAnimation { get; protected set; }
+        public bool RetainAudio { get; protected set; }
+        public float ImagePadding { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public Statuses Status { get; protected set; }
 
-        public AnimationTask(User owner, DrivingVideo sourceVideo, Image sourceImage, ResultVideo resultAnimation)
+        public AnimationTask(User owner, DrivingVideo sourceVideo, Image sourceImage, ResultVideo resultAnimation, bool retainAudio = true, float imagePadding = 0.2f)
         {
             Id = Guid.NewGuid();
 
@@ -27,6 +29,9 @@ namespace AlterEgo.Core.Domains
             SetSourceVideo(sourceVideo);
             SetSourceImage(sourceImage);
             SetResultAnimation(resultAnimation);
+
+            RetainAudio = retainAudio;
+            SetImagePadding(imagePadding);
 
             CreatedAt = DateTime.Now;
 
@@ -40,6 +45,13 @@ namespace AlterEgo.Core.Domains
         {
             ResultAnimation.SetProcessingFinished();
             Status = Statuses.Done;
+        }
+
+        private void SetImagePadding(float imagePadding)
+        {
+            if (imagePadding < 0 || imagePadding > 1)
+                throw new ArgumentException($"Image padding should be between 0.0 and 1.0 (was {imagePadding})", nameof(imagePadding));
+            ImagePadding = ImagePadding;
         }
 
         private void SetOwner(User owner)
