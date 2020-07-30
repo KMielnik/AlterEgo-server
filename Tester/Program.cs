@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using AlterEgo.Core.Domains;
+﻿using AlterEgo.Core.Domains;
+using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture.Services;
+using Microsoft.Extensions.Options;
+using System;
+using System.Threading.Tasks;
 
 namespace Tester
 {
@@ -14,7 +13,17 @@ namespace Tester
         {
             try
             {
-                var animator = new Animator();
+                var settings = new CoreAnimatorSettings
+                {
+                    IsUsingDocker = true,
+                    DockerImage = "kamilmielnik/alterego-core:2.0.4",
+                    ImagesDirectory = "files/images",
+                    VideosDirectory = "files/videos",
+                    TempDirectory = "files/temp",
+                    OutputDirectory = "files/output",
+                    UsingGPU = false,
+                };
+                var animator = new CoreAnimator(Options.Create(settings));
 
                 var user = new User("login", "password", "salt", "Agatka", "elo@wp.pl");
                 var video = new DrivingVideo("a.mp4", user, TimeSpan.Zero);
@@ -26,12 +35,12 @@ namespace Tester
                 var task1 = new AnimationTask(user, video, image, result);
                 var task2 = new AnimationTask(user, video, image2, result2);
 
-                await foreach (var task in animator.Animate(task1))
-                {
-                    Console.WriteLine(task.SourceImage);
-                }
+                await animator.Animate(task1);
+
+                Console.WriteLine(task1.Status);
+
             }
-            catch
+            catch (Exception ex)
             {
                 Console.WriteLine("Eee");
             }

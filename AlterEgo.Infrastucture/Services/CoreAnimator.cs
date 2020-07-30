@@ -1,4 +1,6 @@
 ﻿using AlterEgo.Core.Domains;
+using AlterEgo.Core.Interfaces;
+using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture.Exceptions;
 using Microsoft.Extensions.Options;
 using System;
@@ -13,43 +15,84 @@ using System.Threading.Tasks;
 
 namespace AlterEgo.Infrastucture.Services
 {
-    public class Animator : IAnimator
+    public class CoreAnimator : IAnimator
     {
-        public async IAsyncEnumerable<AnimationTask> Animate(params AnimationTask[] tasks)
+        protected readonly CoreAnimatorSettings _settings;
+
+        public CoreAnimator(IOptions<CoreAnimatorSettings> settings)
+        {
+            _settings = settings.Value;
+        }
+
+        public async Task Animate(AnimationTask task)
         {
             var builder = GetPreconfiguredBuilder();
 
-            foreach (var task in tasks)
-            {
-                builder.WithDrivingVideo(task.SourceVideo)
-                    .AddResultAnimation(task.SourceImage, task.ResultAnimation);
-            }
+            builder.WithDrivingVideo(task.SourceVideo)
+                .AddResultAnimation(task.SourceImage, task.ResultAnimation);
+
+            if (task.RetainAudio)
+                builder.WithAudio();
+
+            builder.WithCustomImagePadding(task.ImagePadding);
 
             var command = builder.Build();
 
             await foreach (var ev in RunAnimationProcessAsync(command))
             {
-                Console.WriteLine(ev.EventType.Name);
+                switch (ev.EventType.Name)
+                {
+                    case EventType.VIDEO_SAVED:
+                        task.SetStatusDone();
+                        break;
+
+                    case EventType.ERROR_OPENING_MODEL:
+                    case EventType.ERROR_OPENING_VIDEO:
+                    case EventType.ERROR_OPENING_IMAGE:
+                        throw new ProcessingAnimationFailedException(ev.EventType.Text, ev.Filename);
+
+                    case EventType.ERROR_ARGUMENT_PARSING:
+                        throw new ProcessingAnimationFailedException(ev.EventType.Text);
+
+                    case { } when ev.EventType.IsError:
+                        throw new ProcessingAnimationFailedException("Unknown error when processing animation occured");
+                }
+            }
+        }
+
+        protected IOptionsCommandBuilder GetPreconfiguredBuilder()
+        {
+            if (_settings.IsUsingDocker)
+            {
+                if (_settings.DockerImage is null)
+                    throw new MissingConfigurationSetting(nameof(_settings.DockerImage), nameof(CoreAnimatorSettings));
+            }
+            else
+            {
+                if (_settings.PythonStartingPoint is null)
+                    throw new MissingConfigurationSetting(nameof(_settings.PythonStartingPoint), nameof(CoreAnimatorSettings));
             }
 
-            foreach (var task in tasks)
-                yield return task;
+            var builder = (_settings.IsUsingDocker ?
+                AnimationCommandBuilder.UsingDocker(_settings.DockerImage) :
+                AnimationCommandBuilder.UsingPython(_settings.PythonStartingPoint))
+                    .WithExecutablePath(_settings.ExecPath)
+                    .WithImagesDirectory(_settings.ImagesDirectory)
+                    .WithVideosDirectory(_settings.VideosDirectory)
+                    .WithTempDirectory(_settings.TempDirectory)
+                    .WithOutputDirectory(_settings.OutputDirectory)
+                    .WithParameters();
+
+            if (_settings.UsingGPU)
+                builder.WithGPUSupport();
+
+            return builder;
         }
 
-        private IOptionsCommandBuilder GetPreconfiguredBuilder()
+        protected virtual async IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command)
         {
-            return AnimationCommandBuilder.UsingDocker("kamilmielnik/alterego-core:2.0.4")
-                .WithExecutablePath()
-                .WithImagesDirectory("images")
-                .WithVideosDirectory("videos")
-                .WithTempDirectory("temp")
-                .WithOutputDirectory("out put")
-                .WithParameters()
-                .WithAudio();
-        }
+            const int QUEUE_OUTPUT_DELAY_MS = 1000;
 
-        private async IAsyncEnumerable<OutputEvent> RunAnimationProcessAsync((string path, string arguments) command)
-        {
             using var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -65,7 +108,7 @@ namespace AlterEgo.Infrastucture.Services
             };
 
             var eventsQueue = new Queue<OutputEvent>();
-            
+
             var processCloseEvent = new TaskCompletionSource();
             process.Exited += (_, e) => processCloseEvent.TrySetResult();
 
@@ -87,7 +130,7 @@ namespace AlterEgo.Infrastucture.Services
                         }
                     }
                 };
-            
+
 
             var outputCloseEvent = new TaskCompletionSource();
             process.OutputDataReceived += handleOutputEvent(outputCloseEvent);
@@ -107,7 +150,7 @@ namespace AlterEgo.Infrastucture.Services
                 outputCloseEvent.Task,
                 errorCloseEvent.Task);
 
-            while(await Task.WhenAny(processFinishedTask, Task.Delay(500)) != processFinishedTask)
+            while (await Task.WhenAny(processFinishedTask, Task.Delay(QUEUE_OUTPUT_DELAY_MS)) != processFinishedTask)
             {
                 while (eventsQueue.Count > 0)
                     yield return eventsQueue.Dequeue();
@@ -117,18 +160,43 @@ namespace AlterEgo.Infrastucture.Services
                 yield return eventsQueue.Dequeue();
         }
 
-        private class OutputEvent
+        protected class OutputEvent
         {
             public EventType EventType { get; init; }
             public double Time { get; init; }
             public string Filename { get; init; }
+
+            public override string ToString()
+                => $"OutputEvent: {{EventType:{{{EventType}}}, Time:{Time}, Filename:{Filename}}}";
         }
 
-        private class EventType
+        protected class EventType
         {
             public bool IsError { get; init; }
             public string Name { get; init; }
             public string Text { get; init; }
+
+            #region EventTypes
+            public const string OPENING_MODEL = "OPENING_MODEL";
+            public const string PROCESSING_STARTED = "PROCESSING_STARTED";
+            public const string OPENING_VIDEO = "OPENING_VIDEO";
+            public const string VIDEO_OPENED = "VIDEO_OPENED";
+            public const string PREPROCESSING_FIND_BEST_FRAME = "PREPROCESSING_FIND_BEST_FRAME";
+            public const string OPENING_VIDEO_TEMP = "OPENING_VIDEO_TEMP";
+            public const string PREPROCESSING_FIND_BEST_FRAME_TEMP = "PREPROCESSING_FIND_BEST_FRAME_TEMP";
+            public const string PROCESSING_VIDEO_STARTED = "PROCESSING_VIDEO_STARTED";
+            public const string SAVING_OUTPUT_VIDEO = "SAVING_OUTPUT_VIDEO";
+            public const string VIDEO_SAVED = "VIDEO_SAVED";
+
+
+            public const string ERROR_OPENING_IMAGE = "ERROR_OPENING_IMAGE";
+            public const string ERROR_OPENING_VIDEO = "ERROR_OPENING_VIDEO";
+            public const string ERROR_OPENING_MODEL = "ERROR_OPENING_MODEL";
+            public const string ERROR_ARGUMENT_PARSING = "ERROR_ARGUMENT_PARSING";
+            #endregion
+
+            public override string ToString()
+                => $"EventType: {{IsError:{IsError}, Time:{Name}, Filename:{Text}}}";
         }
 
         public class AnimationCommandBuilder : IEnviromentBuilder, IOptionsCommandBuilder
@@ -226,7 +294,7 @@ namespace AlterEgo.Infrastucture.Services
 
             public IOptionsCommandBuilder AddResultAnimation(Image image, ResultVideo resultVideo)
             {
-                if(image is null)
+                if (image is null)
                     throw new ArgumentNullException(nameof(image));
                 if (resultVideo is null)
                     throw new ArgumentNullException(nameof(resultVideo));
@@ -265,6 +333,8 @@ namespace AlterEgo.Infrastucture.Services
 
             public IEnviromentBuilder WithExecutablePath(string path)
             {
+                if (path is null)
+                    return WithExecutablePath();
 
                 _executablePath = path;
                 return this;
