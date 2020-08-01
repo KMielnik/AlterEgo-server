@@ -70,5 +70,9 @@ namespace AlterEgo.Core.Domains
 
         public override int GetHashCode()
             => Login.GetHashCode();
+        public User()
+        {
+
+        }
     }
 }

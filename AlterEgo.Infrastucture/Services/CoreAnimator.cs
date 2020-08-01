@@ -40,7 +40,7 @@ namespace AlterEgo.Infrastucture.Services
         public async Task Animate(AnimationTask task)
         {
             _logger.LogInformation("Processing {ResultFilename} started", task.ResultAnimation.Filename);
-            _logger.LogDebug("Processed task - {@Task}", task);
+            _logger.LogDebug("Task being processed by CoreAnimator - {@Task}", task);
 
             task.SetStatusProcessing();
 

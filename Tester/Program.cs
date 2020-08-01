@@ -21,8 +21,8 @@ namespace Tester
             {
                 var settings = new CoreAnimatorSettings
                 {
-                    IsUsingDocker = false,
-                    PythonStartingPoint = "python/run.py",
+                    IsUsingDocker = true,
+                    DockerImage = "kamilmielnik/alterego-core:2.0.4",
                     ImagesDirectory = "files/images",
                     VideosDirectory = "files/videos",
                     TempDirectory = "files/temp",
@@ -42,13 +42,11 @@ namespace Tester
                 var task2 = new AnimationTask(user, video, image2, result2);
 
                 await animator.Animate(task1);
-
-                Console.WriteLine(task1.Status);
                 
             }
             catch (ProcessingAnimationFailedException ex)
             {
-                coreAnimatorlogger.LogError(ex, "Error wehen processing animation");
+                coreAnimatorlogger.LogError(ex, "Error when processing animation");
             }
 
             Log.CloseAndFlush();
@@ -60,7 +58,7 @@ namespace Tester
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:53411/")
+                .WriteTo.Seq("http://localhost:5341/")
                 .CreateLogger();
 
             Log.Logger = serilogLogger;

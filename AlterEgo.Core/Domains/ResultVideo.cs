@@ -20,5 +20,9 @@ namespace AlterEgo.Core.Domains
             IsFinished = true;
             PlannedDeletion = CreatedAt.Add(_plannedLifetime);
         }
+        public ResultVideo()
+        {
+
+        }
     }
 }

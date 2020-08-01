@@ -40,5 +40,10 @@ namespace AlterEgo.Core.Domains.Common
 
         private void SetPlannedDeletion(TimeSpan plannedLifetime)
             => PlannedDeletion = CreatedAt.Add(plannedLifetime);
+
+        public MediaResource()
+        {
+
+        }
     }
 }

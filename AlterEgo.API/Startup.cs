@@ -10,6 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using AlterEgo.Infrastucture.Services;
+using AlterEgo.Core.Interfaces;
+using AlterEgo.Infrastucture.Contexts;
+using AlterEgo.Core.Interfaces.Repositories;
+using AlterEgo.Infrastucture.Repositories;
+using AlterEgo.Core.Settings;
 
 namespace AlterEgo.API
 {
@@ -25,6 +31,14 @@ namespace AlterEgo.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton<IAnimator, CoreAnimator>();
+            services.AddScoped<IAnimationTaskRepository, AnimationTaskRepository>();
+            services.AddEntityFrameworkInMemoryDatabase()
+                .AddDbContext<AlterEgoContext>();
+            services.AddHostedService<AnimationTasksProcessorService>();
+
+            services.Configure<EntityFrameworkSettings>(Configuration.GetSection("EnitityFrameworkSettings"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
