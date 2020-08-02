@@ -32,11 +32,6 @@ namespace AlterEgo.Infrastucture.Services
             _logger.LogInformation("CoreAnimators settings - {@Settings}", _settings);
         }
 
-        /// <summary>
-        /// Animate single task
-        /// </summary>
-        /// <exception cref="ProcessingAnimationFailedException" >Throws when hahaha</exception>
-        /// <param name="task">Task to animate</param>
         public async Task Animate(AnimationTask task)
         {
             _logger.LogInformation("Processing {ResultFilename} started", task.ResultAnimation.Filename);
@@ -91,7 +86,7 @@ namespace AlterEgo.Infrastucture.Services
                 if (_settings.DockerImage is null)
                     throw new MissingConfigurationSetting(nameof(_settings.DockerImage), nameof(CoreAnimatorSettings));
             }
-            else
+            else 
             {
                 if (_settings.PythonStartingPoint is null)
                     throw new MissingConfigurationSetting(nameof(_settings.PythonStartingPoint), nameof(CoreAnimatorSettings));
@@ -164,7 +159,7 @@ namespace AlterEgo.Infrastucture.Services
 
             var isProcessStarted = process.Start();
             if (!isProcessStarted)
-                throw new ApplicationException("Cannot start the animation processing process");
+                throw new AnimatorConnectionException("Cannot start the animation processing process");
 
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();

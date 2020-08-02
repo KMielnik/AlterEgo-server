@@ -28,8 +28,6 @@ namespace AlterEgo.Infrastucture.Contexts
                 optionsBuilder.UseInMemoryDatabase("alterego");
             else
                 optionsBuilder.UseSqlServer(_settings.ConnectionString);
-
-            optionsBuilder.EnableSensitiveDataLogging();
         }
 
         public DbSet<User> Users { get; private set; }

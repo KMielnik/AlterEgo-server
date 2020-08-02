@@ -14,12 +14,12 @@ namespace AlterEgo.API
     {
         public static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore.ChangeTracking", Serilog.Events.LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5341")
+                .ReadFrom.Configuration(config)
                 .CreateLogger();
 
             try

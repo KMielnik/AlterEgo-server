@@ -16,6 +16,7 @@ using AlterEgo.Infrastucture.Contexts;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Infrastucture.Repositories;
 using AlterEgo.Core.Settings;
+using AlterEgo.Infrastucture;
 
 namespace AlterEgo.API
 {
@@ -32,13 +33,7 @@ namespace AlterEgo.API
         {
             services.AddControllers();
 
-            services.AddSingleton<IAnimator, CoreAnimator>();
-            services.AddScoped<IAnimationTaskRepository, AnimationTaskRepository>();
-            services.AddEntityFrameworkInMemoryDatabase()
-                .AddDbContext<AlterEgoContext>();
-            services.AddHostedService<AnimationTasksProcessorService>();
-
-            services.Configure<EntityFrameworkSettings>(Configuration.GetSection("EnitityFrameworkSettings"));
+            services.AddAlterEgoInfrastructure(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
