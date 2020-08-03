@@ -2,6 +2,7 @@
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture.Contexts;
+using AlterEgo.Infrastucture.Exceptions;
 using AlterEgo.Infrastucture.Repositories;
 using AlterEgo.Infrastucture.Services;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,10 @@ namespace AlterEgo.Infrastucture
                     .GetSection("AnimationProcessing")
                     .GetSection("CoreAnimator"));
 
+            services.Configure<AnimationTaskProcessorSettings>(
+                configuration
+                    .GetSection("AnimationProcessing"));
+
             #endregion
 
             #region repositories
@@ -35,7 +40,19 @@ namespace AlterEgo.Infrastucture
 
             #endregion
 
-            services.AddSingleton<IAnimator, CoreAnimator>();
+            var animator = configuration
+                .GetSection("AnimationProcessing")
+                .GetSection("Animator")
+                .Value;
+
+            switch (animator)
+            {
+                case "CoreAnimator":
+                    services.AddSingleton<IAnimator, CoreAnimator>();
+                    break;
+                default:
+                    throw new MissingConfigurationSetting("Animator", "AnimationProcessing");
+            }
 
             services.AddDbContext<AlterEgoContext>();
 
