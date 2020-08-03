@@ -6,11 +6,6 @@ using AlterEgo.Infrastucture.Repositories;
 using AlterEgo.Infrastucture.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlterEgo.Infrastucture
 {
@@ -31,7 +26,13 @@ namespace AlterEgo.Infrastucture
             #endregion
 
             #region repositories
-            services.AddScoped<IAnimationTaskRepository, AnimationTaskRepository>();
+            services
+                .AddScoped<IAnimationTaskRepository, AnimationTaskRepository>()
+                .AddScoped<IImageRepository, ImageRepository>()
+                .AddScoped<IResultVideoRepository, ResultVideoRepository>()
+                .AddScoped<IDrivingVideoRepository, DrivingVideoRepository>()
+                .AddScoped<IUserRepository, UserRepository>();
+
             #endregion
 
             services.AddSingleton<IAnimator, CoreAnimator>();

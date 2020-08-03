@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AlterEgo.Infrastucture.Repositories
@@ -20,10 +18,12 @@ namespace AlterEgo.Infrastucture.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(AnimationTask animationTask)
+        public async Task<AnimationTask> AddAsync(AnimationTask animationTask)
         {
             await _context.AnimationTasks.AddAsync(animationTask);
             await _context.SaveChangesAsync();
+
+            return animationTask;
         }
 
         public async Task DeleteAsync(AnimationTask animationTask)

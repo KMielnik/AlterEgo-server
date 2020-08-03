@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AlterEgo.Core.Domains;
+﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AlterEgo.API.Controllers
 {

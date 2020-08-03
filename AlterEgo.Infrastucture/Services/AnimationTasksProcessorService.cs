@@ -1,13 +1,9 @@
 ﻿using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Infrastucture.Exceptions;
-using AlterEgo.Infrastucture.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +28,7 @@ namespace AlterEgo.Infrastucture.Services
 
             cancellationToken.Register(() => _logger.LogDebug("Animation tasks service is stopping"));
 
-            while(!cancellationToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 using var scope = _scopeFactory.CreateScope();
                 var _tasksRepository = scope.ServiceProvider.GetRequiredService<IAnimationTaskRepository>();

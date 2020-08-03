@@ -1,13 +1,8 @@
 ﻿using AlterEgo.Core.Domains;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AlterEgo.Core.Interfaces.Repositories
 {
-    public interface IDrivingVideoRepository
+    public interface IDrivingVideoRepository : IGenericMediaRepository<DrivingVideo>
     {
-        Task<DrivingVideo> GetAsync(string filename);
-        IAsyncEnumerable<DrivingVideo> GetAllAsync();
-        Task AddAsync(DrivingVideo drivingVideo);
     }
 }

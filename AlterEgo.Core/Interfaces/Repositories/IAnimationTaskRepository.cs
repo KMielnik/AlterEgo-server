@@ -9,7 +9,7 @@ namespace AlterEgo.Core.Interfaces.Repositories
     {
         Task<AnimationTask> GetAsync(Guid id);
         IAsyncEnumerable<AnimationTask> GetAllAsync();
-        Task AddAsync(AnimationTask animationTask);
+        Task<AnimationTask> AddAsync(AnimationTask animationTask);
         Task UpdateAsync(AnimationTask animationTask);
         Task DeleteAsync(AnimationTask animationTask);
     }

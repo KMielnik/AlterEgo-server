@@ -86,7 +86,7 @@ namespace AlterEgo.Infrastucture.Services
                 if (_settings.DockerImage is null)
                     throw new MissingConfigurationSetting(nameof(_settings.DockerImage), nameof(CoreAnimatorSettings));
             }
-            else 
+            else
             {
                 if (_settings.PythonStartingPoint is null)
                     throw new MissingConfigurationSetting(nameof(_settings.PythonStartingPoint), nameof(CoreAnimatorSettings));

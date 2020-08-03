@@ -21,6 +21,9 @@ namespace AlterEgo.Core.Domains.Common
             ActualDeletion = null;
         }
 
+        public void SetActualDeletionTime(DateTime actualDeletion)
+            => ActualDeletion = actualDeletion;
+
         private void SetFilename(string filename)
             => Filename = filename switch
             {
