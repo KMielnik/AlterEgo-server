@@ -3,6 +3,8 @@ using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Infrastucture.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,6 +76,18 @@ namespace AlterEgo.Infrastucture.Services
                     catch (RequiredParameterMissingException ex)
                     {
                         _logger.LogCritical(ex, "Animator builder didn't receive all parameters");
+                        task.SetStatusFailed();
+
+                        throw;
+                    }
+                    catch(FileNotFoundException ex)
+                    {
+                        _logger.LogCritical(ex, "Couldn't open file from task");
+                        task.SetStatusFailed();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogCritical(ex, "Couldn't process task for unkown reason");
                         task.SetStatusFailed();
 
                         throw;

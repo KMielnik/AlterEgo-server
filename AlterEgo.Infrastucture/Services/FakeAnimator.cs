@@ -31,8 +31,8 @@ namespace AlterEgo.Infrastucture.Services
             _logger.LogInformation("Started simulating animation of task with outputfile - {OutputFile}", task.ResultAnimation.Filename);
             _logger.LogDebug("Processed task details - {@Task}", task);
 
-            int waitTime = (
-                (int) ((_randomGenerator.NextDouble() * (_settings.MaxProcessingTime - _settings.MinProcessingTime))
+            int waitTime =
+                (int)(((_randomGenerator.NextDouble() * (_settings.MaxProcessingTime - _settings.MinProcessingTime))
                 + _settings.MinProcessingTime)
                 * 1000);
 
