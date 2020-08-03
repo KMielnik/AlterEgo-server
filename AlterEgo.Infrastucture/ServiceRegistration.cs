@@ -19,15 +19,19 @@ namespace AlterEgo.Infrastucture
                 configuration
                     .GetSection("EnitityFrameworkSettings"));
 
-            services.Configure<CoreAnimatorSettings>(
-                configuration
-                    .GetSection("AnimationProcessing")
-                    .GetSection("CoreAnimator"));
+            var animationProcessingSection = configuration
+                .GetSection("AnimationProcessing");
 
             services.Configure<AnimationTaskProcessorSettings>(
-                configuration
-                    .GetSection("AnimationProcessing"));
+                animationProcessingSection);
 
+            services.Configure<CoreAnimatorSettings>(
+                animationProcessingSection
+                    .GetSection("CoreAnimator"));
+
+            services.Configure<FakeAnimatorSettings>(
+                animationProcessingSection
+                    .GetSection("FakeAnimator"));
             #endregion
 
             #region repositories
@@ -49,6 +53,9 @@ namespace AlterEgo.Infrastucture
             {
                 case "CoreAnimator":
                     services.AddSingleton<IAnimator, CoreAnimator>();
+                    break;
+                case "FakeAnimator":
+                    services.AddSingleton<IAnimator, FakeAnimator>();
                     break;
                 default:
                     throw new MissingConfigurationSetting("Animator", "AnimationProcessing");
