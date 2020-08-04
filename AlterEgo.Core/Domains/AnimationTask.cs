@@ -9,6 +9,8 @@ namespace AlterEgo.Core.Domains
             New,
             Processing,
             Done,
+            Notified,
+            Failed,
         }
 
         public Guid Id { get; protected set; }
@@ -47,6 +49,12 @@ namespace AlterEgo.Core.Domains
             Status = Statuses.Done;
         }
 
+        public void SetStatusNotified()
+            => Status = Statuses.Notified;
+
+        public void SetStatusFailed()
+            => Status = Statuses.Failed;
+
         private void SetImagePadding(float imagePadding)
         {
             if (imagePadding < 0 || imagePadding > 1)
@@ -84,5 +92,10 @@ namespace AlterEgo.Core.Domains
                 ResultVideo video when !video.Owner.Equals(Owner) => throw new ArgumentException("Assigned owner does not own this media resource", nameof(resultAnimation)),
                 _ => resultAnimation,
             };
+
+        public AnimationTask()
+        {
+
+        }
     }
 }

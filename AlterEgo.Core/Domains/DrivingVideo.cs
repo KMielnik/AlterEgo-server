@@ -8,5 +8,10 @@ namespace AlterEgo.Core.Domains
         public DrivingVideo(string filename, User owner, TimeSpan plannedLifetime) : base(filename, owner, plannedLifetime)
         {
         }
+
+        public DrivingVideo()
+        {
+
+        }
     }
 }

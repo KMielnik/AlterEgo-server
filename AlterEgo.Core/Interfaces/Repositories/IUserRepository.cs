@@ -8,7 +8,7 @@ namespace AlterEgo.Core.Interfaces.Repositories
     {
         Task<User> GetAsync(string login);
         IAsyncEnumerable<User> GetAllAsync();
-        Task AddAsync(User user);
+        Task<User> AddAsync(User user);
         Task UpdateAsync(User user);
         Task DeleteAsync(User user);
     }

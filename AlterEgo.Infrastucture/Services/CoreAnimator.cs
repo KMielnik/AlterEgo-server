@@ -2,6 +2,8 @@
 using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture.Exceptions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,14 +20,25 @@ namespace AlterEgo.Infrastucture.Services
     public class CoreAnimator : IAnimator
     {
         protected readonly CoreAnimatorSettings _settings;
+        private readonly ILogger<CoreAnimator> _logger;
 
-        public CoreAnimator(IOptions<CoreAnimatorSettings> settings)
+        public CoreAnimator(IOptions<CoreAnimatorSettings> settings,
+            ILogger<CoreAnimator> logger)
         {
             _settings = settings.Value;
+            _logger = logger ?? NullLogger<CoreAnimator>.Instance;
+
+            _logger.LogInformation("CoreAnimator initialized");
+            _logger.LogInformation("CoreAnimators settings - {@Settings}", _settings);
         }
 
         public async Task Animate(AnimationTask task)
         {
+            _logger.LogInformation("Processing {ResultFilename} started", task.ResultAnimation.Filename);
+            _logger.LogDebug("Task being processed by CoreAnimator - {@Task}", task);
+
+            task.SetStatusProcessing();
+
             var builder = GetPreconfiguredBuilder();
 
             builder.WithDrivingVideo(task.SourceVideo)
@@ -38,8 +51,12 @@ namespace AlterEgo.Infrastucture.Services
 
             var command = builder.Build();
 
+            _logger.LogDebug("Animator command - {Command}", command);
+
             await foreach (var ev in RunAnimationProcessAsync(command))
             {
+                _logger.LogInformation("Animator returned event - {OutputEvent}", ev);
+
                 switch (ev.EventType.Name)
                 {
                     case EventType.VIDEO_SAVED:
@@ -58,6 +75,8 @@ namespace AlterEgo.Infrastucture.Services
                         throw new ProcessingAnimationFailedException("Unknown error when processing animation occured");
                 }
             }
+
+            _logger.LogInformation("Processing {ResultFilename} finished", task.ResultAnimation.Filename);
         }
 
         protected IOptionsCommandBuilder GetPreconfiguredBuilder()
@@ -140,7 +159,7 @@ namespace AlterEgo.Infrastucture.Services
 
             var isProcessStarted = process.Start();
             if (!isProcessStarted)
-                throw new ApplicationException("Cannot start the animation processing process");
+                throw new AnimatorConnectionException("Cannot start the animation processing process");
 
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();

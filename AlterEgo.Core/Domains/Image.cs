@@ -8,5 +8,10 @@ namespace AlterEgo.Core.Domains
         public Image(string filename, User owner, TimeSpan plannedLifetime) : base(filename, owner, plannedLifetime)
         {
         }
+
+        public Image()
+        {
+
+        }
     }
 }

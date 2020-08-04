@@ -9,11 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Core", "AlterEgo.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Infrastucture", "AlterEgo.Infrastucture\AlterEgo.Infrastucture.csproj", "{8C797F94-0894-447B-8C60-FE19BA643F0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlterEgo.Tests", "AlterEgo.Tests\AlterEgo.Tests.csproj", "{50331DAC-056B-434F-9F4A-9BD873D46A67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Tests", "AlterEgo.Tests\AlterEgo.Tests.csproj", "{50331DAC-056B-434F-9F4A-9BD873D46A67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlterEgo.Tests.EndToEnd", "AlterEgo.Tests.EndToEnd\AlterEgo.Tests.EndToEnd.csproj", "{4C0C410A-8966-44CA-B285-431E0DFFB06D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{A42EC099-97ED-457A-9C6D-508222FF10BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Tests.EndToEnd", "AlterEgo.Tests.EndToEnd\AlterEgo.Tests.EndToEnd.csproj", "{4C0C410A-8966-44CA-B285-431E0DFFB06D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +39,6 @@ Global
 		{4C0C410A-8966-44CA-B285-431E0DFFB06D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C0C410A-8966-44CA-B285-431E0DFFB06D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C0C410A-8966-44CA-B285-431E0DFFB06D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A42EC099-97ED-457A-9C6D-508222FF10BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A42EC099-97ED-457A-9C6D-508222FF10BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A42EC099-97ED-457A-9C6D-508222FF10BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A42EC099-97ED-457A-9C6D-508222FF10BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

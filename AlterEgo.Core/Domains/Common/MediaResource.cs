@@ -21,6 +21,9 @@ namespace AlterEgo.Core.Domains.Common
             ActualDeletion = null;
         }
 
+        public void SetActualDeletionTime(DateTime actualDeletion)
+            => ActualDeletion = actualDeletion;
+
         private void SetFilename(string filename)
             => Filename = filename switch
             {
@@ -40,5 +43,10 @@ namespace AlterEgo.Core.Domains.Common
 
         private void SetPlannedDeletion(TimeSpan plannedLifetime)
             => PlannedDeletion = CreatedAt.Add(plannedLifetime);
+
+        public MediaResource()
+        {
+
+        }
     }
 }
