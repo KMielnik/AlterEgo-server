@@ -1,7 +1,9 @@
-﻿using AlterEgo.Core.Interfaces;
+﻿using AlterEgo.Core.Domains;
+using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Infrastucture.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -17,7 +19,11 @@ namespace AlterEgo.Infrastucture.Services
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAnimator _animator;
 
-        public AnimationTasksProcessorService(ILogger<AnimationTasksProcessorService> logger, IServiceScopeFactory scopeFactory, IAnimator animator)
+        public AnimationTasksProcessorService(
+            ILogger<AnimationTasksProcessorService> logger, 
+            IServiceScopeFactory scopeFactory, 
+            IAnimator animator, 
+            IHostApplicationLifetime appLifetime) : base(logger, appLifetime)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
@@ -57,46 +63,47 @@ namespace AlterEgo.Infrastucture.Services
                     catch (MissingConfigurationSetting ex)
                     {
                         _logger.LogCritical(ex, "Missing settings in Animator, cancelling processing.");
-                        task.SetStatusFailed();
 
                         throw;
                     }
                     catch (ProcessingAnimationFailedException ex)
                     {
                         _logger.LogError(ex, "Failed processing task.");
-                        task.SetStatusFailed();
                     }
                     catch (AnimatorConnectionException ex)
                     {
                         _logger.LogCritical(ex, "Couldn't connect to animator.");
-                        task.SetStatusFailed();
 
                         throw;
                     }
                     catch (RequiredParameterMissingException ex)
                     {
                         _logger.LogCritical(ex, "Animator builder didn't receive all parameters");
-                        task.SetStatusFailed();
 
                         throw;
                     }
                     catch(FileNotFoundException ex)
                     {
-                        _logger.LogCritical(ex, "Couldn't open file from task");
-                        task.SetStatusFailed();
+                        _logger.LogError(ex, "Couldn't open file from task");
                     }
                     catch (Exception ex)
                     {
                         _logger.LogCritical(ex, "Couldn't process task for unkown reason");
-                        task.SetStatusFailed();
 
                         throw;
                     }
                     finally
                     {
+                        bool taskFinished =
+                           AnimationTask.Statuses.Done == task.Status ||
+                           AnimationTask.Statuses.Notified == task.Status;
+
+                        if (!taskFinished)
+                            task.SetStatusFailed();
+
                         await _tasksRepository.UpdateAsync(task);
 
-                        _logger.LogDebug("Task {@Task} processing done", task);
+                        _logger.LogDebug("Task {@Task} status updated", task);
                     }
                 }
 
