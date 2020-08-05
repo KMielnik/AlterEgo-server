@@ -2,6 +2,7 @@
 using AlterEgo.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace AlterEgo.API.Controllers
         {
             _repo = repo;
         }
+
+        [HttpGet, Route("Start")]
         public async Task<IActionResult> Index()
         {
             var user = new User("login", "password", "salt", "Agatka", "elo@wp.pl");
@@ -32,6 +35,8 @@ namespace AlterEgo.API.Controllers
 
             await _repo.AddAsync(task1);
             await _repo.AddAsync(task2);
+            if (task1==task2)
+                return NotFound();
             return Ok((await _repo.GetAllAsync().ToListAsync()).Count);
         }
     }

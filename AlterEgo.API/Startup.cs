@@ -1,3 +1,4 @@
+using AlterEgo.API.Extensions;
 using AlterEgo.Infrastucture;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,8 @@ namespace AlterEgo.API
         {
             services.AddControllers();
 
+            services.AddSwaggerExtension();
+
             services.AddAlterEgoInfrastructure(Configuration);
         }
 
@@ -40,6 +43,8 @@ namespace AlterEgo.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwaggerExtension();
         }
     }
 }
