@@ -3,6 +3,7 @@ using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Infrastucture.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -18,7 +19,11 @@ namespace AlterEgo.Infrastucture.Services
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAnimator _animator;
 
-        public AnimationTasksProcessorService(ILogger<AnimationTasksProcessorService> logger, IServiceScopeFactory scopeFactory, IAnimator animator)
+        public AnimationTasksProcessorService(
+            ILogger<AnimationTasksProcessorService> logger, 
+            IServiceScopeFactory scopeFactory, 
+            IAnimator animator, 
+            IHostApplicationLifetime appLifetime) : base(logger, appLifetime)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;

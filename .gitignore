@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /AlterEgo.API/logs
+/AlterEgo.API/files

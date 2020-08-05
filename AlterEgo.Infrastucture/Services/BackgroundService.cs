@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,14 @@ namespace AlterEgo.Infrastucture.Services
     {
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        private readonly ILogger _logger;
+        private readonly IHostApplicationLifetime _appLifetime;
+
+        protected BackgroundService(ILogger logger, IHostApplicationLifetime appLifetime)
+        {
+            _logger = logger;
+            _appLifetime = appLifetime;
+        }
 
         protected abstract Task ExecuteAsync(CancellationToken cancaellationToken);
 
@@ -16,8 +25,12 @@ namespace AlterEgo.Infrastucture.Services
         {
             _executingTask = ExecuteAsync(_stoppingCts.Token);
 
+            CatchEventualException();
+
             if (_executingTask.IsCompleted)
                 return _executingTask;
+
+           
 
             return Task.CompletedTask;
         }
@@ -40,6 +53,19 @@ namespace AlterEgo.Infrastucture.Services
         public void Dispose()
         {
             _stoppingCts.Cancel();
+        }
+
+        private async void CatchEventualException()
+        {
+            try
+            {
+                await _executingTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "BackgroundService encountered unhandled exception, exiting application...");
+                _appLifetime.StopApplication();
+            }
         }
     }
 }
