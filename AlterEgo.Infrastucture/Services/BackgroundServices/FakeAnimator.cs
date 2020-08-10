@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services
+namespace AlterEgo.Infrastucture.Services.BackgroundServices
 {
     public class FakeAnimator : IAnimator
     {
@@ -32,7 +32,7 @@ namespace AlterEgo.Infrastucture.Services
             _logger.LogDebug("Processed task details - {@Task}", task);
 
             int waitTime =
-                (int)(((_randomGenerator.NextDouble() * (_settings.MaxProcessingTime - _settings.MinProcessingTime))
+                (int)((_randomGenerator.NextDouble() * (_settings.MaxProcessingTime - _settings.MinProcessingTime)
                 + _settings.MinProcessingTime)
                 * 1000);
 

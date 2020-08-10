@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services
+namespace AlterEgo.Infrastucture.Services.BackgroundServices
 {
     public class AnimationTasksProcessorService : BackgroundService
     {
@@ -20,9 +20,9 @@ namespace AlterEgo.Infrastucture.Services
         private readonly IAnimator _animator;
 
         public AnimationTasksProcessorService(
-            ILogger<AnimationTasksProcessorService> logger, 
-            IServiceScopeFactory scopeFactory, 
-            IAnimator animator, 
+            ILogger<AnimationTasksProcessorService> logger,
+            IServiceScopeFactory scopeFactory,
+            IAnimator animator,
             IHostApplicationLifetime appLifetime) : base(logger, appLifetime)
         {
             _logger = logger;
@@ -44,7 +44,7 @@ namespace AlterEgo.Infrastucture.Services
                 _logger.LogTrace("Getting tasks from database");
                 var newTasks = _tasksRepository
                     .GetAllAsync()
-                    .Where(t => t.Status == Core.Domains.AnimationTask.Statuses.New)
+                    .Where(t => t.Status == AnimationTask.Statuses.New)
                     .OrderBy(t => t.CreatedAt);
 
                 await foreach (var task in newTasks)
@@ -82,7 +82,7 @@ namespace AlterEgo.Infrastucture.Services
 
                         throw;
                     }
-                    catch(FileNotFoundException ex)
+                    catch (FileNotFoundException ex)
                     {
                         _logger.LogError(ex, "Couldn't open file from task");
                     }

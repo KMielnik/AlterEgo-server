@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services
+namespace AlterEgo.Infrastucture.Services.BackgroundServices
 {
     public abstract class BackgroundService : IHostedService, IDisposable
     {
@@ -30,7 +30,7 @@ namespace AlterEgo.Infrastucture.Services
             if (_executingTask.IsCompleted)
                 return _executingTask;
 
-           
+
 
             return Task.CompletedTask;
         }

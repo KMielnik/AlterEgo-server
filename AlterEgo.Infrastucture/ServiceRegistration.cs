@@ -4,7 +4,7 @@ using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture.Contexts;
 using AlterEgo.Infrastucture.Exceptions;
 using AlterEgo.Infrastucture.Repositories;
-using AlterEgo.Infrastucture.Services;
+using AlterEgo.Infrastucture.Services.BackgroundServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

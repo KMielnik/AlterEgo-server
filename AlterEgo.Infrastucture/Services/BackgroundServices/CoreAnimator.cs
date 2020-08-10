@@ -15,7 +15,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services
+namespace AlterEgo.Infrastucture.Services.BackgroundServices
 {
     public class CoreAnimator : IAnimator
     {
@@ -346,7 +346,7 @@ namespace AlterEgo.Infrastucture.Services
             }
 
             public IEnviromentBuilder WithExecutablePath()
-                => this.WithExecutablePath(_type == EnviromentTypes.Docker ?
+                => WithExecutablePath(_type == EnviromentTypes.Docker ?
                     "docker" :
                     RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "python" : "python3");
 
