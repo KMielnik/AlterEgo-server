@@ -4,5 +4,24 @@
         <name>AlterEgo.API</name>
     </assembly>
     <members>
+        <member name="M:AlterEgo.API.Controllers.AccountController.AuthenticateAsync(AlterEgo.Core.DTOs.Account.AuthenticationRequest)">
+            <example>
+            [ superadmin@gmail.com / 123Pa$$word! ]
+            [ basic@gmail.com / 123Pa$$word! ]
+            </example>
+             <remarks>
+            Sample request:
+            
+                POST api/Employee
+                {        
+                  "firstName": "Mike",
+                  "lastName": "Andrew",
+                  "emailId": "Mike.Andrew@gmail.com"        
+                }
+            </remarks>
+            <param name="request"></param>
+            <response code="200">Returns authorized user data</response>
+            <returns>Newly authorized user</returns>
+        </member>
     </members>
 </doc>
