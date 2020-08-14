@@ -19,7 +19,7 @@ namespace AlterEgo.Core.DTOs.Account
         /// <summary>
         /// Your password
         /// </summary>
-        /// <example>pass12345</example>
+        /// <example>pass123</example>
         [Required]
         public string Password { get; init; }
     }

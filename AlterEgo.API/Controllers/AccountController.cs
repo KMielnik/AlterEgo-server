@@ -22,13 +22,28 @@ namespace AlterEgo.API.Controllers
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Log in
+        /// </summary>
+        /// <param name="request">Your authentication data</param>
+        /// <response code="200">You have been logged in correctly</response>
+        /// <response code="400">Could not find user with this login/password combination</response>
         [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost, Route("authenticate")]
         public async Task<IActionResult> AuthenticateAsync(AuthenticationRequest request)
             => Ok(await _accountService.AuthenticateAsync(request));
 
+
+        /// <summary>
+        /// Register a new user.
+        /// </summary>
+        /// <param name="request">Request data, with which new user will be created</param>
+        /// <response code="200">User has been created</response>
+        /// <response code="409">User with this login already exists</response>
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPost, Route("register")]
         public async Task<IActionResult> RegisterAsync(RegisterRequest request)
         {

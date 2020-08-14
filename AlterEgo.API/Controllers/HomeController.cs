@@ -1,5 +1,6 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.Interfaces.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace AlterEgo.API.Controllers
 {
     [Route("[controller]")]
-    public class HomeController : Controller
+    public class HomeController : ControllerBase
     {
         private readonly IAnimationTaskRepository _repo;
 
@@ -18,6 +19,7 @@ namespace AlterEgo.API.Controllers
             _repo = repo;
         }
 
+        [Authorize]
         [HttpGet, Route("Start")]
         public async Task<IActionResult> Index()
         {

@@ -8,7 +8,70 @@
             <summary>
             Your login
             </summary>
-            <example>Login</example>
+            <example>login123</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.AuthenticationRequest.Password">
+            <summary>
+            Your password
+            </summary>
+            <example>pass123</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.AuthenticationResponse.Login">
+            <summary>
+            Your login
+            </summary>
+            <example>login123</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.AuthenticationResponse.Email">
+            <summary>
+            Your email assigned to your account
+            </summary>
+            <example>login@gmail.com</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.AuthenticationResponse.Nickname">
+            <summary>
+            Nickname you have choosen
+            </summary>
+            <example>CoolGuy29</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.AuthenticationResponse.JWToken">
+            <summary>
+            Token used for authorization purposes
+            </summary>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.JWToken.Token">
+            <summary>
+            Your JWToken
+            </summary>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.JWToken.Expires">
+            <summary>
+            Expiration date for your token in UTC Datetime
+            </summary>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.RegisterRequest.Login">
+            <summary>
+            Your login that you will use to log in.
+            </summary>
+            <example>login123</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.RegisterRequest.Password">
+            <summary>
+            Your password
+            </summary>
+            <example>pass123</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.RegisterRequest.Email">
+            <summary>
+            Email address used for communication with you
+            </summary>
+            <example>email@gmail.com</example>
+        </member>
+        <member name="P:AlterEgo.Core.DTOs.Account.RegisterRequest.Nickname">
+            <summary>
+            Your nickname - used only for displaying
+            </summary>
+            <example>CoolGuy29</example>
         </member>
     </members>
 </doc>
