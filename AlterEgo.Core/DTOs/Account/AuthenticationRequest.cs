@@ -9,9 +9,17 @@ namespace AlterEgo.Core.DTOs.Account
 {
     public class AuthenticationRequest
     {
+        /// <summary>
+        /// Your login
+        /// </summary>
+        /// <example>login123</example>
         [Required]
         public string Login { get; init; }
 
+        /// <summary>
+        /// Your password
+        /// </summary>
+        /// <example>pass12345</example>
         [Required]
         public string Password { get; init; }
     }

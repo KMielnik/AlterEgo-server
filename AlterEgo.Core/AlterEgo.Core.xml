@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AlterEgo.Core</name>
+    </assembly>
+    <members>
+        <member name="P:AlterEgo.Core.DTOs.Account.AuthenticationRequest.Login">
+            <summary>
+            Your login
+            </summary>
+            <example>Login</example>
+        </member>
+    </members>
+</doc>

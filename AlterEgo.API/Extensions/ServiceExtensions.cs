@@ -19,6 +19,9 @@ namespace AlterEgo.API.Extensions
             services.AddSwaggerGen(c =>
             {
                 c.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AlterEgo.API.xml"));
+                c.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AlterEgo.Infrastucture.xml"));
+                c.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AlterEgo.Core.xml"));
+
                 c.SwaggerDoc("v3", new OpenApiInfo
                 {
                     Version = "v3",
