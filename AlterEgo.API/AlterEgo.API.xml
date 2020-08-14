@@ -4,5 +4,13 @@
         <name>AlterEgo.API</name>
     </assembly>
     <members>
+        <member name="M:AlterEgo.API.Controllers.AccountController.RegisterAsync(AlterEgo.Core.DTOs.Account.RegisterRequest)">
+            <summary>
+            Register a new user.
+            </summary>
+            <param name="request">Request data, with which new user will be created</param>
+            <response code="200">User has been created</response>
+            <response code="409">User with this login already exists</response>
+        </member>
     </members>
 </doc>

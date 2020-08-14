@@ -4,6 +4,7 @@ using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture.Contexts;
 using AlterEgo.Infrastucture.Exceptions;
 using AlterEgo.Infrastucture.Repositories;
+using AlterEgo.Infrastucture.Services;
 using AlterEgo.Infrastucture.Services.BackgroundServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,9 @@ namespace AlterEgo.Infrastucture
             services.Configure<EntityFrameworkSettings>(
                 configuration
                     .GetSection("EnitityFrameworkSettings"));
+
+            services.Configure<JWTSettings>(
+                configuration.GetSection("JWT"));
 
             var animationProcessingSection = configuration
                 .GetSection("AnimationProcessing");
@@ -60,6 +64,10 @@ namespace AlterEgo.Infrastucture
                 default:
                     throw new MissingConfigurationSetting("Animator", "AnimationProcessing");
             }
+
+            services.AddSingleton<IJWTService, JWTService>();
+            services.AddSingleton<IEncrypter, Encrypter>();
+            services.AddScoped<IAccountService, AccountService>();
 
             services.AddDbContext<AlterEgoContext>();
 

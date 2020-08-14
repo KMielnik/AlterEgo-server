@@ -1,4 +1,6 @@
 using AlterEgo.API.Extensions;
+using AlterEgo.API.Middlewares;
+using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +23,8 @@ namespace AlterEgo.API
         {
             services.AddControllers();
 
+            services.AddJWTAuthentication(ConfigurationBinder.Get<JWTSettings>(Configuration.GetSection("JWT")));
+
             services.AddSwaggerExtension();
 
             services.AddAlterEgoInfrastructure(Configuration);
@@ -29,14 +33,14 @@ namespace AlterEgo.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
-
+            else
+                app.UseMiddleware<ErrorHandlerMiddleware>();
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -6,7 +6,8 @@ namespace AlterEgo.Infrastucture.Exceptions
     {
         public string SettingName { get; private set; }
         public string SettingsScopeName { get; private set; }
-        public MissingConfigurationSetting(string settingName, string settingScopeName) : base("Missing setting in configuration")
+        public MissingConfigurationSetting(string settingName, string settingScopeName) 
+            : base($"Missing setting in configuration [{settingScopeName}/{settingName}]")
         {
             SettingName = settingName;
             SettingsScopeName = settingScopeName;

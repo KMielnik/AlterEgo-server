@@ -159,7 +159,7 @@ namespace AlterEgo.Infrastucture.Services.BackgroundServices
 
             var isProcessStarted = process.Start();
             if (!isProcessStarted)
-                throw new AnimatorConnectionException("Cannot start the animation processing process");
+                throw new AnimatorConnectionException();
 
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
