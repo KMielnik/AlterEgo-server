@@ -1,4 +1,5 @@
 using AlterEgo.API.Extensions;
+using AlterEgo.API.Middlewares;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastucture;
 using Microsoft.AspNetCore.Builder;
@@ -32,10 +33,10 @@ namespace AlterEgo.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
-
+            else
+                app.UseMiddleware<ErrorHandlerMiddleware>();
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
