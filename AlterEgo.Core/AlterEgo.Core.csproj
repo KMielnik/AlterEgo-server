@@ -11,4 +11,8 @@
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="AlterEgo.Core.xml" />
+  </ItemGroup>
+
 </Project>
