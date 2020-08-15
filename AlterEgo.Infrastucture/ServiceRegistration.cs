@@ -36,6 +36,10 @@ namespace AlterEgo.Infrastructure
             services.Configure<FakeAnimatorSettings>(
                 animationProcessingSection
                     .GetSection("FakeAnimator"));
+
+            services.Configure<FilesLocationSettings>(
+                animationProcessingSection
+                    .GetSection("FilesLocationSettings"));
             #endregion
 
             #region repositories

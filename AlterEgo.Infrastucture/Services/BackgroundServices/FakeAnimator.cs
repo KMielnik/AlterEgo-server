@@ -15,13 +15,19 @@ namespace AlterEgo.Infrastructure.Services.BackgroundServices
 {
     public class FakeAnimator : IAnimator
     {
-        private readonly FakeAnimatorSettings _settings;
+        private readonly FakeAnimatorSettings _animatorSettings;
+        private readonly FilesLocationSettings _filesLocationSettings;
         private readonly ILogger<FakeAnimator> _logger;
         private readonly Random _randomGenerator;
 
-        public FakeAnimator(IOptions<FakeAnimatorSettings> settings, ILogger<FakeAnimator> logger)
+        public FakeAnimator(
+            IOptions<FakeAnimatorSettings> animatorSettings,
+            IOptions<FilesLocationSettings> filesLocationSettings,
+            ILogger<FakeAnimator> logger)
         {
-            _settings = settings.Value;
+            _animatorSettings = animatorSettings.Value;
+            _filesLocationSettings = filesLocationSettings.Value;
+
             _logger = logger;
             _randomGenerator = new Random();
         }
@@ -32,22 +38,22 @@ namespace AlterEgo.Infrastructure.Services.BackgroundServices
             _logger.LogDebug("Processed task details - {@Task}", task);
 
             int waitTime =
-                (int)((_randomGenerator.NextDouble() * (_settings.MaxProcessingTime - _settings.MinProcessingTime)
-                + _settings.MinProcessingTime)
+                (int)((_randomGenerator.NextDouble() * (_animatorSettings.MaxProcessingTime - _animatorSettings.MinProcessingTime)
+                + _animatorSettings.MinProcessingTime)
                 * 1000);
 
             _logger.LogInformation("Planned processing time (in ms) {WaitTime}", waitTime);
 
-            if (_settings.ShouldCopyVideo)
+            if (_animatorSettings.ShouldCopyVideo)
             {
                 _logger.LogInformation("Selected waiting and copying video to simulate creation.");
-                if (_settings.VideosDirectory is null)
-                    throw new MissingConfigurationSetting(nameof(_settings.VideosDirectory), nameof(FakeAnimatorSettings));
-                if (_settings.OutputDirectory is null)
-                    throw new MissingConfigurationSetting(nameof(_settings.OutputDirectory), nameof(FakeAnimatorSettings));
+                if (_filesLocationSettings.VideosDirectory is null)
+                    throw new MissingConfigurationSetting(nameof(_filesLocationSettings.VideosDirectory), nameof(FakeAnimatorSettings));
+                if (_filesLocationSettings.OutputDirectory is null)
+                    throw new MissingConfigurationSetting(nameof(_filesLocationSettings.OutputDirectory), nameof(FakeAnimatorSettings));
 
-                using var sourceStream = File.OpenRead(Path.Combine(_settings.VideosDirectory, task.SourceVideo.Filename));
-                using var outputStream = File.Create(Path.Combine(_settings.OutputDirectory, task.ResultAnimation.Filename));
+                using var sourceStream = File.OpenRead(Path.Combine(_filesLocationSettings.VideosDirectory, task.SourceVideo.Filename));
+                using var outputStream = File.Create(Path.Combine(_filesLocationSettings.OutputDirectory, task.ResultAnimation.Filename));
 
                 await Task.WhenAll(sourceStream.CopyToAsync(outputStream), Task.Delay(waitTime));
             }
