@@ -1,11 +1,14 @@
-﻿using AlterEgo.Core.Interfaces;
+﻿using AlterEgo.Core.Interfaces.Animation;
+using AlterEgo.Core.Interfaces.Identity;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastructure.Contexts;
 using AlterEgo.Infrastructure.Exceptions;
 using AlterEgo.Infrastructure.Repositories;
 using AlterEgo.Infrastructure.Services;
-using AlterEgo.Infrastructure.Services.BackgroundServices;
+using AlterEgo.Infrastructure.Services.Animation;
+using AlterEgo.Infrastructure.Services.Animation.BackgroundServices;
+using AlterEgo.Infrastructure.Services.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,7 +41,7 @@ namespace AlterEgo.Infrastructure
                     .GetSection("FakeAnimator"));
 
             services.Configure<FilesLocationSettings>(
-                animationProcessingSection
+                configuration
                     .GetSection("FilesLocationSettings"));
             #endregion
 
@@ -75,6 +78,7 @@ namespace AlterEgo.Infrastructure
 
             services.AddDbContext<AlterEgoContext>();
 
+            services.AddScoped<IImageManagerService, ImageManagerService>();
             services.AddHostedService<AnimationTasksProcessorService>();
         }
     }

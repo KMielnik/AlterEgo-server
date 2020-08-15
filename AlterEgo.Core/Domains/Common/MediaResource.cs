@@ -11,10 +11,14 @@ namespace AlterEgo.Core.Domains.Common
         public DateTime PlannedDeletion { get; protected set; }
         public DateTime? ActualDeletion { get; protected set; }
 
+        public TimeSpan PlannedLifetime { get; protected set; }
+
         public MediaResource(string filename, User owner, TimeSpan plannedLifetime)
         {
             SetFilename(filename);
             SetOwner(owner);
+
+            PlannedLifetime = plannedLifetime;
 
             CreatedAt = DateTime.Now;
             SetPlannedDeletion(plannedLifetime);
@@ -23,6 +27,9 @@ namespace AlterEgo.Core.Domains.Common
 
         public void SetActualDeletionTime(DateTime actualDeletion)
             => ActualDeletion = actualDeletion;
+
+        public void RefreshPlannedDeletion()
+            => PlannedDeletion = DateTime.Now + PlannedLifetime;
 
         private void SetFilename(string filename)
             => Filename = filename switch

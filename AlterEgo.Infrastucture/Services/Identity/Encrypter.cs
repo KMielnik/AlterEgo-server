@@ -1,4 +1,4 @@
-﻿using AlterEgo.Core.Interfaces;
+﻿using AlterEgo.Core.Interfaces.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services
+namespace AlterEgo.Infrastructure.Services.Identity
 {
     public class Encrypter : IEncrypter
     {

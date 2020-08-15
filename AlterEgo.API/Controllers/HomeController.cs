@@ -1,6 +1,9 @@
 ﻿using AlterEgo.Core.Domains;
+using AlterEgo.Core.Interfaces.Animation;
 using AlterEgo.Core.Interfaces.Repositories;
+using AlterEgo.Infrastructure.Services.Animation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -12,34 +15,47 @@ namespace AlterEgo.API.Controllers
     [Route("[controller]")]
     public class HomeController : ControllerBase
     {
-        private readonly IAnimationTaskRepository _repo;
+        private readonly IImageManagerService _imageManagerService;
 
-        public HomeController(IAnimationTaskRepository repo)
+        public HomeController(IImageManagerService imageManagerService)
         {
-            _repo = repo;
+            _imageManagerService = imageManagerService;
         }
 
         [Authorize]
-        [HttpGet, Route("Start")]
+        [HttpPost, Route("GetAll")]
         public async Task<IActionResult> Index()
         {
-            var user = new User("login", "password", "salt", "Agatka", "elo@wp.pl");
-            var user2 = new User("login2", "password", "salt", "Agatka", "elo@wp.pl");
-            var video = new DrivingVideo("a.mp4", user, TimeSpan.Zero);
-            var video2 = new DrivingVideo("b.mp4", user2, TimeSpan.Zero);
-            var image = new Image("a.jpg", user, TimeSpan.Zero);
-            var image2 = new Image("b.jpg", user2, TimeSpan.Zero);
-            var result = new ResultVideo("Output.mp4", user, TimeSpan.Zero);
-            var result2 = new ResultVideo("outputto.mp4", user2, TimeSpan.Zero);
 
-            var task1 = new AnimationTask(user, video, image, result);
-            var task2 = new AnimationTask(user2, video2, image2, result2);
+            return Ok(await _imageManagerService.GetAllActiveByUser("login123").ToListAsync());
+        }
 
-            await _repo.AddAsync(task1);
-            await _repo.AddAsync(task2);
-            if (task1==task2)
-                return NotFound();
-            return Ok((await _repo.GetAllAsync().ToListAsync()).Count);
+        [Authorize]
+        [HttpGet, Route("Get")]
+        public async Task<IActionResult> GetFile([FromQuery] string filename)
+        {
+
+            return File(await _imageManagerService.GetFileStream(filename, "login123"), "image/jpeg");
+        }
+
+        [Authorize]
+        [HttpGet, Route("Refresh")]
+        public async Task<IActionResult> Refresh([FromQuery] string filename)
+        {
+            await _imageManagerService.Refresh(filename, "login123");
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost, Route("Upload")]
+        public async Task<IActionResult> Index(IFormFile file)
+        {
+            using(var inputStream = file.OpenReadStream())
+            {
+                await _imageManagerService.SaveFile(inputStream, file.FileName, "login123");
+            }
+
+            return Ok();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AlterEgo.Core.DTOs.Account;
-using AlterEgo.Core.Interfaces;
+using AlterEgo.Core.Interfaces.Identity;
 using AlterEgo.Core.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services
+namespace AlterEgo.Infrastructure.Services.Identity
 {
     public class JWTService : IJWTService
     {

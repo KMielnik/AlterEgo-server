@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 {
     public abstract class BackgroundService : IHostedService, IDisposable
     {

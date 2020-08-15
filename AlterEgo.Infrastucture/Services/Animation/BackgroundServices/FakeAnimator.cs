@@ -1,5 +1,5 @@
 ﻿using AlterEgo.Core.Domains;
-using AlterEgo.Core.Interfaces;
+using AlterEgo.Core.Interfaces.Animation;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 {
     public class FakeAnimator : IAnimator
     {
