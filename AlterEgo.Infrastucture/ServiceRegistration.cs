@@ -78,7 +78,10 @@ namespace AlterEgo.Infrastructure
 
             services.AddDbContext<AlterEgoContext>();
 
-            services.AddScoped<IImageManagerService, ImageManagerService>();
+            services.AddScoped<IImageManagerService, ImageManagerService>()
+                .AddScoped<IDrivingVideoManagerService, DrivingVideoManagerService>()
+                .AddScoped<IResultVideoManagerService, ResultVideoManagerService>();
+
             services.AddHostedService<AnimationTasksProcessorService>();
         }
     }
