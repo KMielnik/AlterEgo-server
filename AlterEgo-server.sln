@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.API", "AlterEgo.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Core", "AlterEgo.Core\AlterEgo.Core.csproj", "{699C2F39-7344-4B3D-9EE1-691EB9FD561F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Infrastucture", "AlterEgo.Infrastucture\AlterEgo.Infrastucture.csproj", "{8C797F94-0894-447B-8C60-FE19BA643F0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Infrastructure", "AlterEgo.Infrastucture\AlterEgo.Infrastructure.csproj", "{8C797F94-0894-447B-8C60-FE19BA643F0A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlterEgo.Tests", "AlterEgo.Tests\AlterEgo.Tests.csproj", "{50331DAC-056B-434F-9F4A-9BD873D46A67}"
 EndProject

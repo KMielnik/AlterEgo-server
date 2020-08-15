@@ -1,7 +1,7 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Settings;
-using AlterEgo.Infrastucture.Exceptions;
+using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.BackgroundServices
 {
     public class FakeAnimator : IAnimator
     {

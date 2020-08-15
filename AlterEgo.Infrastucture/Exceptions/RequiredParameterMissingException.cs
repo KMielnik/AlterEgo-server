@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace AlterEgo.Infrastucture.Exceptions
+namespace AlterEgo.Infrastructure.Exceptions
 {
     public class RequiredParameterMissingException : ApplicationException
     {

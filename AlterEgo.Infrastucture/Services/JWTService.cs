@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services
+namespace AlterEgo.Infrastructure.Services
 {
     public class JWTService : IJWTService
     {

@@ -1,12 +1,12 @@
 ﻿using AlterEgo.Core.Domains.Common;
 using AlterEgo.Core.Interfaces.Repositories;
-using AlterEgo.Infrastucture.Contexts;
+using AlterEgo.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Repositories
+namespace AlterEgo.Infrastructure.Repositories
 {
     public class GenericMediaRepository<T> : IGenericMediaRepository<T> where T : MediaResource
     {

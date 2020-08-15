@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlterEgo.Infrastucture.Exceptions
+namespace AlterEgo.Infrastructure.Exceptions
 {
     public class ProcessingAnimationFailedException : ApplicationException
     {

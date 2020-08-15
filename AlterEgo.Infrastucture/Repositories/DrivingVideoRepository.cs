@@ -1,9 +1,9 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.Interfaces.Repositories;
-using AlterEgo.Infrastucture.Contexts;
+using AlterEgo.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace AlterEgo.Infrastucture.Repositories
+namespace AlterEgo.Infrastructure.Repositories
 {
     public class DrivingVideoRepository : GenericMediaRepository<DrivingVideo>, IDrivingVideoRepository
     {

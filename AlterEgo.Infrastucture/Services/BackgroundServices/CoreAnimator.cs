@@ -1,7 +1,7 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Settings;
-using AlterEgo.Infrastucture.Exceptions;
+using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -15,7 +15,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.BackgroundServices
 {
     public class CoreAnimator : IAnimator
     {

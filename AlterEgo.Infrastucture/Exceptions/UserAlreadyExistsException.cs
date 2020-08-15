@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Exceptions
+namespace AlterEgo.Infrastructure.Exceptions
 {
     public class UserAlreadyExistsException : ApplicationException
     {

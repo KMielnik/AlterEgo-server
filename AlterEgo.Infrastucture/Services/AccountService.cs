@@ -2,7 +2,7 @@
 using AlterEgo.Core.DTOs.Account;
 using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Interfaces.Repositories;
-using AlterEgo.Infrastucture.Exceptions;
+using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services
+namespace AlterEgo.Infrastructure.Services
 {
     public class AccountService : IAccountService
     {

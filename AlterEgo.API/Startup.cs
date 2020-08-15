@@ -1,7 +1,7 @@
 using AlterEgo.API.Extensions;
 using AlterEgo.API.Middlewares;
 using AlterEgo.Core.Settings;
-using AlterEgo.Infrastucture;
+using AlterEgo.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

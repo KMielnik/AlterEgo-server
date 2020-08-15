@@ -3,7 +3,7 @@ using AlterEgo.Core.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace AlterEgo.Infrastucture.Contexts
+namespace AlterEgo.Infrastructure.Contexts
 {
     public class AlterEgoContext : DbContext
     {

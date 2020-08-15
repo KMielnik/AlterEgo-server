@@ -1,4 +1,4 @@
-﻿using AlterEgo.Infrastucture.Exceptions;
+﻿using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

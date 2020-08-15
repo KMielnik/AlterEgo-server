@@ -1,7 +1,7 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Interfaces.Repositories;
-using AlterEgo.Infrastucture.Exceptions;
+using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastucture.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.BackgroundServices
 {
     public class AnimationTasksProcessorService : BackgroundService
     {

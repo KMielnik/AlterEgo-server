@@ -1,15 +1,15 @@
 ﻿using AlterEgo.Core.Interfaces;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Core.Settings;
-using AlterEgo.Infrastucture.Contexts;
-using AlterEgo.Infrastucture.Exceptions;
-using AlterEgo.Infrastucture.Repositories;
-using AlterEgo.Infrastucture.Services;
-using AlterEgo.Infrastucture.Services.BackgroundServices;
+using AlterEgo.Infrastructure.Contexts;
+using AlterEgo.Infrastructure.Exceptions;
+using AlterEgo.Infrastructure.Repositories;
+using AlterEgo.Infrastructure.Services;
+using AlterEgo.Infrastructure.Services.BackgroundServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AlterEgo.Infrastucture
+namespace AlterEgo.Infrastructure
 {
     public static class ServiceRegistration
     {
