@@ -340,3 +340,7 @@ ASALocalRun/
 healthchecksdb
 /AlterEgo.API/logs
 /AlterEgo.API/files
+
+/AlterEgo.API/AlterEgo.API.xml
+/AlterEgo.Core/AlterEgo.Core.xml
+/AlterEgo.Infrastucture/AlterEgo.Infrastucture.xml
