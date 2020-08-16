@@ -11,5 +11,6 @@ namespace AlterEgo.Core.DTOs
         public string Filename { get; init; }
         public string UserLogin { get; init; }
         public DateTime ExistsUntill { get; init; }
+        public byte[] Thumbnail { get; init; }
     }
 }

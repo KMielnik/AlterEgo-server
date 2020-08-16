@@ -34,7 +34,7 @@ namespace AlterEgo.API.Controllers
         {
             var login = GetAuthorizedUserLogin();
 
-            return Ok(await _imageManagerService.GetAllActiveByUser(login).ToListAsync());
+            return Ok(await _imageManagerService.GetAllActiveByUser(login, false).ToListAsync());
         }
 
         [Authorize]
@@ -64,7 +64,6 @@ namespace AlterEgo.API.Controllers
             {
                 await _imageManagerService.SaveFile(inputStream, file.FileName, login);
             }
-
             return Ok();
         }
 

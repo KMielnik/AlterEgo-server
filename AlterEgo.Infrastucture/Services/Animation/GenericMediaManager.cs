@@ -5,6 +5,7 @@ using AlterEgo.Core.Interfaces.Animation;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastructure.Exceptions;
+using FFmpeg.NET;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -14,29 +15,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace AlterEgo.Infrastructure.Services.Animation
 {
     public class GenericMediaManager<T> : IGenericMediaManager<T> where T : MediaResource
     {
         private readonly IGenericMediaRepository<T> _mediaRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IThumbnailGenerator _thumbnailGenerator;
 
         private readonly string _filesLocationPath;
         private readonly ILogger<GenericMediaManager<T>> _logger;
 
         public GenericMediaManager(
-            IGenericMediaRepository<T> mediaRepository, 
-            IUserRepository userRepository, 
-            string filesLocationPath, 
-            ILogger<GenericMediaManager<T>> logger)
+            IGenericMediaRepository<T> mediaRepository,
+            IUserRepository userRepository,
+            string filesLocationPath,
+            ILogger<GenericMediaManager<T>> logger, 
+            IThumbnailGenerator thumbnailGenerator)
         {
             _mediaRepository = mediaRepository;
             _userRepository = userRepository;
             _filesLocationPath = filesLocationPath;
             _logger = logger;
+            _thumbnailGenerator = thumbnailGenerator;
         }
 
-        public async IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin)
+        public async IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin, bool includeThumbnails)
         {
             _logger.LogDebug("Getting all active {MediaType} for {Login}", typeof(T), userLogin);
 
@@ -52,7 +57,8 @@ namespace AlterEgo.Infrastructure.Services.Animation
                 {
                     Filename = media.Filename,
                     UserLogin = media.Owner.Login,
-                    ExistsUntill = media.PlannedDeletion
+                    ExistsUntill = media.PlannedDeletion,
+                    Thumbnail = includeThumbnails ? media.Thumbnail : null
                 };
             }
 
@@ -121,17 +127,24 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             _logger.LogDebug("Saved {MediaType} {Filename}", typeof(T), newFilename);
 
+            _logger.LogDebug("Generationg thumbnail.");
+
+            var thumbnail = await _thumbnailGenerator.GetThumbnailAsync(newPath);
+
+            _logger.LogDebug("Thumbnail generated.");
+
             var newMedia = (T)Convert.ChangeType(typeof(T) switch
             {
-                Type t when t == typeof(Image) => new Image(newFilename, user, TimeSpan.FromHours(6)),
-                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, user, TimeSpan.FromHours(6)),
-                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, user, TimeSpan.FromHours(6)),
+                Type t when t == typeof(Image) => new Image(newFilename, user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
                 _ => throw new ApplicationException($"Unkonwn type of Media, {typeof(Image)} is not known handled")
             }, typeof(T));
 
             newMedia = await _mediaRepository.AddAsync(newMedia);
 
             _logger.LogDebug("Saved entry {@MediaEntry} to database", newMedia);
+
             return newMedia.Filename;
         }
     }

@@ -43,6 +43,9 @@ namespace AlterEgo.Infrastructure
             services.Configure<FilesLocationSettings>(
                 configuration
                     .GetSection("FilesLocationSettings"));
+
+            services.Configure<FFmpegSettings>(
+                configuration.GetSection("FFmpegSettings"));
             #endregion
 
             #region repositories
@@ -77,6 +80,8 @@ namespace AlterEgo.Infrastructure
             services.AddScoped<IAccountService, AccountService>();
 
             services.AddDbContext<AlterEgoContext>();
+
+            services.AddSingleton<IThumbnailGenerator, ThumbnailGenerator>();
 
             services.AddScoped<IImageManagerService, ImageManagerService>()
                 .AddScoped<IDrivingVideoManagerService, DrivingVideoManagerService>()

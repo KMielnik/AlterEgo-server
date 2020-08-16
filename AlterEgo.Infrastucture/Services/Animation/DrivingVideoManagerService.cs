@@ -20,11 +20,13 @@ namespace AlterEgo.Infrastructure.Services.Animation
             IOptions<FilesLocationSettings> filesLocationSettings,
             IDrivingVideoRepository drivingVideoRepository,
             IUserRepository userRepository,
-            ILogger<DrivingVideoManagerService> logger)
+            ILogger<DrivingVideoManagerService> logger,
+            IThumbnailGenerator thumbnailGenerator)
             : base(drivingVideoRepository,
                   userRepository,
                   filesLocationSettings.Value.VideosDirectory,
-                  logger)
+                  logger,
+                  thumbnailGenerator)
         { }
     }
 }

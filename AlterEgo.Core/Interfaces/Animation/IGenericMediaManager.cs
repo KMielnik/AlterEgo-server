@@ -14,6 +14,6 @@ namespace AlterEgo.Core.Interfaces.Animation
         Task<string> SaveFile(Stream inputStream, string originalFilename, string userLogin);
         Task<FileStream> GetFileStream(string filename, string userLogin);
         Task Refresh(string filename, string userLogin);
-        IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin);
+        IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin, bool includeThumbnails);
     }
 }
