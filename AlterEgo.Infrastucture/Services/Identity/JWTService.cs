@@ -55,5 +55,15 @@ namespace AlterEgo.Infrastructure.Services.Identity
                 Expires = expires
             };
         }
+
+        public string GetLoginFromToken(ClaimsIdentity identity)
+        {
+            if(identity is null)
+                throw new UnauthorizedAccessException("No authorized user avaiable for getting login.");
+
+            var loginClaim = identity.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti) ?? throw new ApplicationException("Jti claim was not found in token.");
+
+            return loginClaim.Value;
+        }
     }
 }
