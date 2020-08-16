@@ -39,6 +39,7 @@ namespace AlterEgo.API.Middlewares
                     AuthenticationFailedException => HttpStatusCode.BadRequest,
                     UserAlreadyExistsException => HttpStatusCode.Conflict,
                     UnauthorizedAccessException => HttpStatusCode.Forbidden,
+                    UnsupportedMediaTypeException => HttpStatusCode.UnsupportedMediaType,
 
                     _ => HttpStatusCode.InternalServerError,
                 };

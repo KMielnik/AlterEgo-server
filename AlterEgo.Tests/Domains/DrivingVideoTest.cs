@@ -33,7 +33,8 @@ namespace AlterEgo.Tests.Domains
             var video = new DrivingVideo(
                 filename,
                 _validUser,
-                plannedTimespan);
+                plannedTimespan,
+                null);
 
             Assert.IsNotNull(video);
 
@@ -51,7 +52,8 @@ namespace AlterEgo.Tests.Domains
                 => new DrivingVideo(
                     filename,
                     _validUser,
-                    TimeSpan.Zero));
+                    TimeSpan.Zero,
+                    null));
         }
     }
 }

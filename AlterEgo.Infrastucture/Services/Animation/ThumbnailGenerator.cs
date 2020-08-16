@@ -56,7 +56,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
         private Task<byte[]> GenerateThumbnailFromImage(string filepath)
         {
             using var ms = new MemoryStream();
-            using var thumbnail = Image.FromFile(filepath).GetThumbnailImage(256, 256, null, new IntPtr());
+            using var thumbnail = Image.FromFile(filepath).GetThumbnailImage(256, 256, null, new IntPtr()); //TODO: Keep aspect ratio
             thumbnail.Save(ms, ImageFormat.Jpeg);
 
             return Task.FromResult(ms.ToArray());
@@ -71,7 +71,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             _logger.LogDebug("Starting generation of thumbnail in {ThumbnailPath} for video {VideoPath}", outputPath, filepath);
 
-            await _ffmpeg.GetThumbnailAsync(input, output, new ConversionOptions { Seek = TimeSpan.Zero });
+            await _ffmpeg.GetThumbnailAsync(input, output, new ConversionOptions { Seek = TimeSpan.Zero }); //TODO: Keep aspect ratio and rescale
 
             _logger.LogDebug("Thumbnail generated");
 
