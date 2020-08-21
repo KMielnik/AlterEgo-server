@@ -11,9 +11,9 @@ namespace AlterEgo.Core.Interfaces.Animation
 {
     public interface IGenericMediaManager<T> where T : MediaResource
     {
-        Task<string> SaveFile(Stream inputStream, string originalFilename, string userLogin);
+        Task<MediaFileInfo> SaveFile(Stream inputStream, string originalFilename, string userLogin);
         Task<FileStream> GetFileStream(string filename, string userLogin);
-        Task Refresh(string filename, string userLogin);
+        Task<MediaFileInfo> Refresh(string filename, string userLogin);
         IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin, bool includeThumbnails);
     }
 }

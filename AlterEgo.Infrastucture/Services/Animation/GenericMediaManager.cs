@@ -53,13 +53,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
             {
                 _logger.LogDebug("Active {MediaType} found - {@Media}", typeof(T), media);
 
-                yield return new MediaFileInfo
-                {
-                    Filename = media.Filename,
-                    UserLogin = media.Owner.Login,
-                    ExistsUntill = media.PlannedDeletion,
-                    Thumbnail = includeThumbnails ? media.Thumbnail : null
-                };
+                yield return ConvertToMediaFileInfo(media, includeThumbnails);
             }
 
             _logger.LogDebug("Finished getting all active {MediaType} for {Login}", typeof(T), userLogin);
@@ -78,7 +72,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
             return fileStream;
         }
 
-        public async Task Refresh(string filename, string userLogin)
+        public async Task<MediaFileInfo> Refresh(string filename, string userLogin)
         {
             var file = await GetFile(filename, userLogin);
 
@@ -87,6 +81,8 @@ namespace AlterEgo.Infrastructure.Services.Animation
             await _mediaRepository.UpdateAsync(file);
 
             _logger.LogDebug("Refreshed planned deletion time of {@File}", file);
+
+            return ConvertToMediaFileInfo(file, false);
         }
 
         private async Task<T> GetFile(string filename, string userLogin)
@@ -107,7 +103,16 @@ namespace AlterEgo.Infrastructure.Services.Animation
             return file;
         }
 
-        public async Task<string> SaveFile(Stream inputStream, string originalFilename, string userLogin)
+        private MediaFileInfo ConvertToMediaFileInfo(T item, bool includeThumbnails)
+            => new MediaFileInfo
+            {
+                Filename = item.Filename,
+                UserLogin = item.Owner.Login,
+                ExistsUntill = item.PlannedDeletion,
+                Thumbnail = includeThumbnails ? item.Thumbnail : null
+            };
+
+        public async Task<MediaFileInfo> SaveFile(Stream inputStream, string originalFilename, string userLogin)
         {
             _logger.LogDebug("Saving file received from {UserLogin}", userLogin);
 
@@ -145,7 +150,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             _logger.LogDebug("Saved entry {@MediaEntry} to database", newMedia);
 
-            return newMedia.Filename;
+            return ConvertToMediaFileInfo(newMedia, false);
         }
     }
 }

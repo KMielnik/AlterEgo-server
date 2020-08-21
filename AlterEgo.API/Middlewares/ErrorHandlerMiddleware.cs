@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -40,6 +41,7 @@ namespace AlterEgo.API.Middlewares
                     UserAlreadyExistsException => HttpStatusCode.Conflict,
                     UnauthorizedAccessException => HttpStatusCode.Forbidden,
                     UnsupportedMediaTypeException => HttpStatusCode.UnsupportedMediaType,
+                    FileNotFoundException => HttpStatusCode.NotFound,
 
                     _ => HttpStatusCode.InternalServerError,
                 };
