@@ -87,6 +87,8 @@ namespace AlterEgo.Infrastructure
                 .AddScoped<IDrivingVideoManagerService, DrivingVideoManagerService>()
                 .AddScoped<IResultVideoManagerService, ResultVideoManagerService>();
 
+            services.AddScoped<IAnimationTaskService, AnimationTaskService>();
+
             services.AddHostedService<AnimationTasksProcessorService>();
         }
     }

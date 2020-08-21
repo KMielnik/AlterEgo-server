@@ -41,7 +41,6 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                 using var scope = _scopeFactory.CreateScope();
                 var _tasksRepository = scope.ServiceProvider.GetRequiredService<IAnimationTaskRepository>();
 
-                _logger.LogTrace("Getting tasks from database");
                 var newTasks = _tasksRepository
                     .GetAllAsync()
                     .Where(t => t.Status == AnimationTask.Statuses.New)
@@ -53,6 +52,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                         break;
 
                     task.SetStatusProcessing();
+                    await _tasksRepository.UpdateAsync(task);
 
                     _logger.LogDebug("Received {@Task}, starting processing", task);
                     try

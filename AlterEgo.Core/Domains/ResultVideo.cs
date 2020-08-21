@@ -15,8 +15,9 @@ namespace AlterEgo.Core.Domains
             _plannedLifetime = plannedLifetime;
         }
 
-        public void SetProcessingFinished()
+        public void SetProcessingFinished(byte[] thumbnail)
         {
+            Thumbnail = thumbnail;
             IsFinished = true;
             PlannedDeletion = CreatedAt.Add(_plannedLifetime);
         }

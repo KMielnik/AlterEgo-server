@@ -64,7 +64,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
             }
 
             _logger.LogInformation("Simulation done");
-            task.SetStatusDone();
+            task.SetStatusDone(null);
             _logger.LogInformation("Task processed");
         }
     }

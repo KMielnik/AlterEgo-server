@@ -32,7 +32,6 @@ namespace AlterEgo.Core.Domains.Common
         private void SetThumbnail(byte[] thumbnail)
             => Thumbnail = thumbnail switch
             {
-                null => throw new ArgumentNullException(nameof(thumbnail)),
                 { Length: 0} => throw new ArgumentException("Cannot be empty", nameof(thumbnail)),
                 _ => thumbnail
             };

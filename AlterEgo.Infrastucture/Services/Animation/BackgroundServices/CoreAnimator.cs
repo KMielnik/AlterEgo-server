@@ -22,11 +22,13 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
         protected readonly CoreAnimatorSettings _animatorSettings;
         protected readonly FilesLocationSettings _filesLocationSettings;
         private readonly ILogger<CoreAnimator> _logger;
+        private readonly IThumbnailGenerator _thumbnailGenerator;
 
         public CoreAnimator(
             IOptions<CoreAnimatorSettings> animatorSettings,
             IOptions<FilesLocationSettings> filesLocationSettings,
-            ILogger<CoreAnimator> logger)
+            ILogger<CoreAnimator> logger, 
+            IThumbnailGenerator thumbnailGenerator)
         {
             _animatorSettings = animatorSettings.Value;
             _filesLocationSettings = filesLocationSettings.Value;
@@ -35,6 +37,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             _logger.LogInformation("CoreAnimator initialized");
             _logger.LogInformation("CoreAnimators settings - {@Settings}", _animatorSettings);
+            _thumbnailGenerator = thumbnailGenerator;
         }
 
         public async Task Animate(AnimationTask task)
@@ -65,7 +68,11 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                 switch (ev.EventType.Name)
                 {
                     case EventType.VIDEO_SAVED:
-                        task.SetStatusDone();
+                        var resultVideoPath = Path.Combine(_filesLocationSettings.OutputDirectory, task.ResultAnimation.Filename);
+
+                        var thumbnail = await _thumbnailGenerator.GetThumbnailAsync(resultVideoPath);
+
+                        task.SetStatusDone(thumbnail);
                         break;
 
                     case EventType.ERROR_OPENING_MODEL:
