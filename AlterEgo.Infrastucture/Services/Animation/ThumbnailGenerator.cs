@@ -45,6 +45,17 @@ namespace AlterEgo.Infrastructure.Services.Animation
             }
         }
 
+        private (int targetWidth, int targetHeight) GetThumbnailResolution(int originalWidth, int originalHeight)
+        {
+            var ratio =  ((double)originalWidth) / originalHeight;
+
+            var baseSize = Math.Min(256, Math.Max(originalWidth, originalHeight));
+
+            return ratio < 1 ?
+                ((int)(baseSize * ratio), baseSize) :
+                (baseSize, (int)(baseSize / ratio));
+        }
+
         public async Task<byte[]> GetThumbnailAsync(string filepath)
         => Path.GetExtension(filepath) switch
         {
@@ -56,7 +67,20 @@ namespace AlterEgo.Infrastructure.Services.Animation
         private Task<byte[]> GenerateThumbnailFromImage(string filepath)
         {
             using var ms = new MemoryStream();
-            using var thumbnail = Image.FromFile(filepath).GetThumbnailImage(256, 256, null, new IntPtr()); //TODO: Keep aspect ratio
+
+            var image = Image.FromFile(filepath);
+            var originalDimensions = image.Size;
+
+            var thumbnailDimensions = GetThumbnailResolution(originalDimensions.Width, originalDimensions.Height);
+
+            _logger.LogDebug("Generating thumbnail for {FilePath}, from resolution {@OriginalResolution} to {@TargetResolution}", filepath, originalDimensions, thumbnailDimensions);
+
+            using var thumbnail = image.GetThumbnailImage(
+                thumbnailDimensions.targetWidth, 
+                thumbnailDimensions.targetHeight, 
+                null, 
+                new IntPtr());
+
             thumbnail.Save(ms, ImageFormat.Jpeg);
 
             return Task.FromResult(ms.ToArray());
@@ -69,9 +93,28 @@ namespace AlterEgo.Infrastructure.Services.Animation
             var outputPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()) + ".jpg";
             var output = new MediaFile(outputPath);
 
+            var originalSize = (await _ffmpeg.GetMetaDataAsync(input))
+                .VideoData
+                .FrameSize
+                .Split('x')
+                .Select(x => int.Parse(x))
+                .ToList();
+
+            var targetSize = GetThumbnailResolution(originalSize[1], originalSize[0]);
+
+            _logger.LogDebug("Original video size: {@OriginalSize},  target thumbnail size {TargetSize}", originalSize, targetSize);
+
             _logger.LogDebug("Starting generation of thumbnail in {ThumbnailPath} for video {VideoPath}", outputPath, filepath);
 
-            await _ffmpeg.GetThumbnailAsync(input, output, new ConversionOptions { Seek = TimeSpan.Zero }); //TODO: Keep aspect ratio and rescale
+            await _ffmpeg.GetThumbnailAsync(input, 
+                output,
+                new ConversionOptions 
+                { 
+                    Seek = TimeSpan.Zero,
+                    VideoSize = FFmpeg.NET.Enums.VideoSize.Custom,
+                    CustomWidth = targetSize.targetWidth,
+                    CustomHeight = targetSize.targetHeight
+                });
 
             _logger.LogDebug("Thumbnail generated");
 
