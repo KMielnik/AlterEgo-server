@@ -18,19 +18,16 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
         private readonly ILogger<AnimationTasksProcessorService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAnimator _animator;
-        private readonly IUserNotifierService _userNotifier;
 
         public AnimationTasksProcessorService(
             ILogger<AnimationTasksProcessorService> logger,
             IServiceScopeFactory scopeFactory,
             IAnimator animator,
-            IHostApplicationLifetime appLifetime,
-            IUserNotifierService userNotifier) : base(logger, appLifetime)
+            IHostApplicationLifetime appLifetime) : base(logger, appLifetime)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
             _animator = animator;
-            _userNotifier = userNotifier;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -44,6 +41,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var _tasksRepository = scope.ServiceProvider.GetRequiredService<IAnimationTaskRepository>();
+                    var _userNotifier = scope.ServiceProvider.GetRequiredService<IUserNotifierService>();
 
                     var newTasks = await _tasksRepository
                         .GetAllAsync()
