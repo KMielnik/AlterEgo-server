@@ -18,7 +18,6 @@ namespace AlterEgo.Infrastructure.Services.Animation
         private readonly IAnimationTaskRepository _taskRepository;
         private readonly IImageRepository _imageRepository;
         private readonly IDrivingVideoRepository _drivingVideoRepository;
-        private readonly IResultVideoRepository _resultVideoRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILogger<AnimationTaskService> _logger;
 
@@ -27,14 +26,12 @@ namespace AlterEgo.Infrastructure.Services.Animation
             ILogger<AnimationTaskService> logger,
             IImageRepository imageRepository,
             IDrivingVideoRepository drivingVideoRepository,
-            IResultVideoRepository resultVideoRepository, 
             IUserRepository userRepository)
         {
             _taskRepository = taskRepository;
             _logger = logger;
             _imageRepository = imageRepository;
             _drivingVideoRepository = drivingVideoRepository;
-            _resultVideoRepository = resultVideoRepository;
             _userRepository = userRepository;
         }
 

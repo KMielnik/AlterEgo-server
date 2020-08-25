@@ -89,7 +89,10 @@ namespace AlterEgo.Infrastructure
 
             services.AddScoped<IAnimationTaskService, AnimationTaskService>();
 
+            services.AddScoped<IUserNotifierService, FakeUserNotifierService>();
+
             services.AddHostedService<AnimationTasksProcessorService>();
+
             services.AddHostedService<ExpiredFilesCleanerService>();
         }
     }
