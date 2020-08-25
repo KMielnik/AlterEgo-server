@@ -143,7 +143,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
                 Type t when t == typeof(Image) => new Image(newFilename, user, TimeSpan.FromHours(6), thumbnail),
                 Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
                 Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
-                _ => throw new ApplicationException($"Unkonwn type of Media, {typeof(Image)} is not known handled")
+                _ => throw new ApplicationException($"Unkonwn type of Media, {typeof(T)} is not known.")
             }, typeof(T));
 
             newMedia = await _mediaRepository.AddAsync(newMedia);

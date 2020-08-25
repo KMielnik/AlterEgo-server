@@ -38,72 +38,75 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                using var scope = _scopeFactory.CreateScope();
-                var _tasksRepository = scope.ServiceProvider.GetRequiredService<IAnimationTaskRepository>();
-
-                var newTasks = _tasksRepository
-                    .GetAllAsync()
-                    .Where(t => t.Status == AnimationTask.Statuses.New)
-                    .OrderBy(t => t.CreatedAt);
-
-                await foreach (var task in newTasks)
+                using (var scope = _scopeFactory.CreateScope())
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
+                    var _tasksRepository = scope.ServiceProvider.GetRequiredService<IAnimationTaskRepository>();
 
-                    task.SetStatusProcessing();
-                    await _tasksRepository.UpdateAsync(task);
+                    var newTasks = await _tasksRepository
+                        .GetAllAsync()
+                        .Where(t => t.Status == AnimationTask.Statuses.New)
+                        .OrderBy(t => t.CreatedAt)
+                        .ToListAsync();
 
-                    _logger.LogDebug("Received {@Task}, starting processing", task);
-                    try
+                    foreach (var task in newTasks)
                     {
-                        await _animator.Animate(task);
-                        //TODO: Notify user about completed task.
-                    }
-                    catch (MissingConfigurationSetting ex)
-                    {
-                        _logger.LogCritical(ex, "Missing settings in Animator, cancelling processing.");
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
 
-                        throw;
-                    }
-                    catch (ProcessingAnimationFailedException ex)
-                    {
-                        _logger.LogError(ex, "Failed processing task.");
-                    }
-                    catch (AnimatorConnectionException ex)
-                    {
-                        _logger.LogCritical(ex, "Couldn't connect to animator.");
-
-                        throw;
-                    }
-                    catch (RequiredParameterMissingException ex)
-                    {
-                        _logger.LogCritical(ex, "Animator builder didn't receive all parameters");
-
-                        throw;
-                    }
-                    catch (FileNotFoundException ex)
-                    {
-                        _logger.LogError(ex, "Couldn't open file from task");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogCritical(ex, "Couldn't process task for unkown reason");
-
-                        throw;
-                    }
-                    finally
-                    {
-                        bool taskFinished =
-                           AnimationTask.Statuses.Done == task.Status ||
-                           AnimationTask.Statuses.Notified == task.Status;
-
-                        if (!taskFinished)
-                            task.SetStatusFailed();
-
+                        task.SetStatusProcessing();
                         await _tasksRepository.UpdateAsync(task);
 
-                        _logger.LogDebug("Task {@Task} status updated", task);
+                        _logger.LogDebug("Received {@Task}, starting processing", task);
+                        try
+                        {
+                            await _animator.Animate(task);
+                            //TODO: Notify user about completed task.
+                        }
+                        catch (MissingConfigurationSetting ex)
+                        {
+                            _logger.LogCritical(ex, "Missing settings in Animator, cancelling processing.");
+
+                            throw;
+                        }
+                        catch (ProcessingAnimationFailedException ex)
+                        {
+                            _logger.LogError(ex, "Failed processing task.");
+                        }
+                        catch (AnimatorConnectionException ex)
+                        {
+                            _logger.LogCritical(ex, "Couldn't connect to animator.");
+
+                            throw;
+                        }
+                        catch (RequiredParameterMissingException ex)
+                        {
+                            _logger.LogCritical(ex, "Animator builder didn't receive all parameters");
+
+                            throw;
+                        }
+                        catch (FileNotFoundException ex)
+                        {
+                            _logger.LogError(ex, "Couldn't open file from task");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogCritical(ex, "Couldn't process task for unkown reason");
+
+                            throw;
+                        }
+                        finally
+                        {
+                            bool taskFinished =
+                               AnimationTask.Statuses.Done == task.Status ||
+                               AnimationTask.Statuses.Notified == task.Status;
+
+                            if (!taskFinished)
+                                task.SetStatusFailed();
+
+                            await _tasksRepository.UpdateAsync(task);
+
+                            _logger.LogDebug("Task {@Task} status updated", task);
+                        }
                     }
                 }
 

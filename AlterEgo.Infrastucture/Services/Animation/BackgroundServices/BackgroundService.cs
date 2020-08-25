@@ -19,7 +19,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
             _appLifetime = appLifetime;
         }
 
-        protected abstract Task ExecuteAsync(CancellationToken cancaellationToken);
+        protected abstract Task ExecuteAsync(CancellationToken cancellationToken);
 
         public virtual Task StartAsync(CancellationToken cancellationToken)
         {

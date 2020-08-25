@@ -90,6 +90,7 @@ namespace AlterEgo.Infrastructure
             services.AddScoped<IAnimationTaskService, AnimationTaskService>();
 
             services.AddHostedService<AnimationTasksProcessorService>();
+            services.AddHostedService<ExpiredFilesCleanerService>();
         }
     }
 }
