@@ -29,17 +29,20 @@ namespace AlterEgo.Tests.Domains
             _userImage = new Image(
                 "filename.jpg",
                 _user,
-                TimeSpan.Zero);
+                TimeSpan.Zero,
+                null);
 
             _userDrivingVideo = new DrivingVideo(
                 "filename.mp4",
                 _user,
-                TimeSpan.Zero);
+                TimeSpan.Zero,
+                null);
 
             _userResultVideo = new ResultVideo(
                 "resultFilename.mp4",
                 _user,
-                TimeSpan.Zero);
+                TimeSpan.Zero,
+                null);
         }
 
         [TestMethod]
@@ -81,7 +84,8 @@ namespace AlterEgo.Tests.Domains
             var imageDiffrentOwner = new Image(
                 "filename.png",
                 diffrentOwner,
-                TimeSpan.Zero);
+                TimeSpan.Zero,
+                null);
 
             Assert.ThrowsException<ArgumentException>(() => new AnimationTask(
                 _user,

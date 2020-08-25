@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Core.Interfaces
+namespace AlterEgo.Core.Interfaces.Identity
 {
     public interface IEncrypter
     {

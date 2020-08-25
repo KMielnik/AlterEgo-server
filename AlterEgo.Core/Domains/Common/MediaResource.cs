@@ -11,18 +11,36 @@ namespace AlterEgo.Core.Domains.Common
         public DateTime PlannedDeletion { get; protected set; }
         public DateTime? ActualDeletion { get; protected set; }
 
-        public MediaResource(string filename, User owner, TimeSpan plannedLifetime)
+        public byte[] Thumbnail { get; protected set; }
+
+        public TimeSpan PlannedLifetime { get; protected set; }
+
+        public MediaResource(string filename, User owner, TimeSpan plannedLifetime, byte[] thumbnail)
         {
             SetFilename(filename);
             SetOwner(owner);
 
+            PlannedLifetime = plannedLifetime;
+
             CreatedAt = DateTime.Now;
             SetPlannedDeletion(plannedLifetime);
             ActualDeletion = null;
+
+            SetThumbnail(thumbnail);
         }
+
+        private void SetThumbnail(byte[] thumbnail)
+            => Thumbnail = thumbnail switch
+            {
+                { Length: 0} => throw new ArgumentException("Cannot be empty", nameof(thumbnail)),
+                _ => thumbnail
+            };
 
         public void SetActualDeletionTime(DateTime actualDeletion)
             => ActualDeletion = actualDeletion;
+
+        public void RefreshPlannedDeletion()
+            => PlannedDeletion = DateTime.Now + PlannedLifetime;
 
         private void SetFilename(string filename)
             => Filename = filename switch

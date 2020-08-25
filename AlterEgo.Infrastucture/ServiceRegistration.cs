@@ -1,11 +1,14 @@
-﻿using AlterEgo.Core.Interfaces;
+﻿using AlterEgo.Core.Interfaces.Animation;
+using AlterEgo.Core.Interfaces.Identity;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastructure.Contexts;
 using AlterEgo.Infrastructure.Exceptions;
 using AlterEgo.Infrastructure.Repositories;
 using AlterEgo.Infrastructure.Services;
-using AlterEgo.Infrastructure.Services.BackgroundServices;
+using AlterEgo.Infrastructure.Services.Animation;
+using AlterEgo.Infrastructure.Services.Animation.BackgroundServices;
+using AlterEgo.Infrastructure.Services.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,6 +39,13 @@ namespace AlterEgo.Infrastructure
             services.Configure<FakeAnimatorSettings>(
                 animationProcessingSection
                     .GetSection("FakeAnimator"));
+
+            services.Configure<FilesLocationSettings>(
+                configuration
+                    .GetSection("FilesLocationSettings"));
+
+            services.Configure<FFmpegSettings>(
+                configuration.GetSection("FFmpegSettings"));
             #endregion
 
             #region repositories
@@ -71,7 +81,19 @@ namespace AlterEgo.Infrastructure
 
             services.AddDbContext<AlterEgoContext>();
 
+            services.AddSingleton<IThumbnailGenerator, ThumbnailGenerator>();
+
+            services.AddScoped<IImageManagerService, ImageManagerService>()
+                .AddScoped<IDrivingVideoManagerService, DrivingVideoManagerService>()
+                .AddScoped<IResultVideoManagerService, ResultVideoManagerService>();
+
+            services.AddScoped<IAnimationTaskService, AnimationTaskService>();
+
+            services.AddScoped<IUserNotifierService, FakeUserNotifierService>();
+
             services.AddHostedService<AnimationTasksProcessorService>();
+
+            services.AddHostedService<ExpiredFilesCleanerService>();
         }
     }
 }

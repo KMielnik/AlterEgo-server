@@ -43,9 +43,9 @@ namespace AlterEgo.Core.Domains
         public void SetStatusProcessing()
             => Status = Statuses.Processing;
 
-        public void SetStatusDone()
+        public void SetStatusDone(byte[] thumbnail)
         {
-            ResultAnimation.SetProcessingFinished();
+            ResultAnimation.SetProcessingFinished(thumbnail);
             Status = Statuses.Done;
         }
 

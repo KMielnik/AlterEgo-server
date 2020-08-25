@@ -1,6 +1,7 @@
 ﻿using AlterEgo.Core.Domains;
 using AlterEgo.Core.DTOs.Account;
-using AlterEgo.Core.Interfaces;
+using AlterEgo.Core.Interfaces.Animation;
+using AlterEgo.Core.Interfaces.Identity;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services
+namespace AlterEgo.Infrastructure.Services.Identity
 {
     public class AccountService : IAccountService
     {

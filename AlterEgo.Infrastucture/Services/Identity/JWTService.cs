@@ -1,5 +1,5 @@
 ﻿using AlterEgo.Core.DTOs.Account;
-using AlterEgo.Core.Interfaces;
+using AlterEgo.Core.Interfaces.Identity;
 using AlterEgo.Core.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services
+namespace AlterEgo.Infrastructure.Services.Identity
 {
     public class JWTService : IJWTService
     {
@@ -54,6 +54,16 @@ namespace AlterEgo.Infrastructure.Services
                 Token = token,
                 Expires = expires
             };
+        }
+
+        public string GetLoginFromToken(ClaimsIdentity identity)
+        {
+            if(identity is null)
+                throw new UnauthorizedAccessException("No authorized user avaiable for getting login.");
+
+            var loginClaim = identity.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti) ?? throw new ApplicationException("Jti claim was not found in token.");
+
+            return loginClaim.Value;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AlterEgo.Core.Domains;
-using AlterEgo.Core.Interfaces;
+using AlterEgo.Core.Interfaces.Animation;
 using AlterEgo.Core.Settings;
 using AlterEgo.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -15,21 +15,29 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 {
     public class CoreAnimator : IAnimator
     {
-        protected readonly CoreAnimatorSettings _settings;
+        protected readonly CoreAnimatorSettings _animatorSettings;
+        protected readonly FilesLocationSettings _filesLocationSettings;
         private readonly ILogger<CoreAnimator> _logger;
+        private readonly IThumbnailGenerator _thumbnailGenerator;
 
-        public CoreAnimator(IOptions<CoreAnimatorSettings> settings,
-            ILogger<CoreAnimator> logger)
+        public CoreAnimator(
+            IOptions<CoreAnimatorSettings> animatorSettings,
+            IOptions<FilesLocationSettings> filesLocationSettings,
+            ILogger<CoreAnimator> logger, 
+            IThumbnailGenerator thumbnailGenerator)
         {
-            _settings = settings.Value;
+            _animatorSettings = animatorSettings.Value;
+            _filesLocationSettings = filesLocationSettings.Value;
+
             _logger = logger ?? NullLogger<CoreAnimator>.Instance;
 
             _logger.LogInformation("CoreAnimator initialized");
-            _logger.LogInformation("CoreAnimators settings - {@Settings}", _settings);
+            _logger.LogInformation("CoreAnimators settings - {@Settings}", _animatorSettings);
+            _thumbnailGenerator = thumbnailGenerator;
         }
 
         public async Task Animate(AnimationTask task)
@@ -60,7 +68,11 @@ namespace AlterEgo.Infrastructure.Services.BackgroundServices
                 switch (ev.EventType.Name)
                 {
                     case EventType.VIDEO_SAVED:
-                        task.SetStatusDone();
+                        var resultVideoPath = Path.Combine(_filesLocationSettings.OutputDirectory, task.ResultAnimation.Filename);
+
+                        var thumbnail = await _thumbnailGenerator.GetThumbnailAsync(resultVideoPath);
+
+                        task.SetStatusDone(thumbnail);
                         break;
 
                     case EventType.ERROR_OPENING_MODEL:
@@ -81,28 +93,28 @@ namespace AlterEgo.Infrastructure.Services.BackgroundServices
 
         protected IOptionsCommandBuilder GetPreconfiguredBuilder()
         {
-            if (_settings.IsUsingDocker)
+            if (_animatorSettings.IsUsingDocker)
             {
-                if (_settings.DockerImage is null)
-                    throw new MissingConfigurationSetting(nameof(_settings.DockerImage), nameof(CoreAnimatorSettings));
+                if (_animatorSettings.DockerImage is null)
+                    throw new MissingConfigurationSetting(nameof(_animatorSettings.DockerImage), nameof(CoreAnimatorSettings));
             }
             else
             {
-                if (_settings.PythonStartingPoint is null)
-                    throw new MissingConfigurationSetting(nameof(_settings.PythonStartingPoint), nameof(CoreAnimatorSettings));
+                if (_animatorSettings.PythonStartingPoint is null)
+                    throw new MissingConfigurationSetting(nameof(_animatorSettings.PythonStartingPoint), nameof(CoreAnimatorSettings));
             }
 
-            var builder = (_settings.IsUsingDocker ?
-                AnimationCommandBuilder.UsingDocker(_settings.DockerImage) :
-                AnimationCommandBuilder.UsingPython(_settings.PythonStartingPoint))
-                    .WithExecutablePath(_settings.ExecPath)
-                    .WithImagesDirectory(_settings.ImagesDirectory)
-                    .WithVideosDirectory(_settings.VideosDirectory)
-                    .WithTempDirectory(_settings.TempDirectory)
-                    .WithOutputDirectory(_settings.OutputDirectory)
+            var builder = (_animatorSettings.IsUsingDocker ?
+                AnimationCommandBuilder.UsingDocker(_animatorSettings.DockerImage) :
+                AnimationCommandBuilder.UsingPython(_animatorSettings.PythonStartingPoint))
+                    .WithExecutablePath(_animatorSettings.ExecPath)
+                    .WithImagesDirectory(_filesLocationSettings.ImagesDirectory)
+                    .WithVideosDirectory(_filesLocationSettings.VideosDirectory)
+                    .WithTempDirectory(_filesLocationSettings.TempDirectory)
+                    .WithOutputDirectory(_filesLocationSettings.OutputDirectory)
                     .WithParameters();
 
-            if (_settings.UsingGPU)
+            if (_animatorSettings.UsingGPU)
                 builder.WithGPUSupport();
 
             return builder;

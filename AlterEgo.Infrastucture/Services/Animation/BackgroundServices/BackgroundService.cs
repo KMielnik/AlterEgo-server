@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AlterEgo.Infrastructure.Services.BackgroundServices
+namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 {
     public abstract class BackgroundService : IHostedService, IDisposable
     {
@@ -19,7 +19,7 @@ namespace AlterEgo.Infrastructure.Services.BackgroundServices
             _appLifetime = appLifetime;
         }
 
-        protected abstract Task ExecuteAsync(CancellationToken cancaellationToken);
+        protected abstract Task ExecuteAsync(CancellationToken cancellationToken);
 
         public virtual Task StartAsync(CancellationToken cancellationToken)
         {
