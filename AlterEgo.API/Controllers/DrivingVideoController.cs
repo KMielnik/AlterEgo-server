@@ -85,7 +85,7 @@ namespace AlterEgo.API.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(MediaFileInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch, Route("{filename}")]
+        [HttpPatch, Route("{filename}/refresh")]
         public async Task<IActionResult> Refresh(string filename)
         {
             var login = GetAuthorizedUserLogin();
@@ -97,7 +97,7 @@ namespace AlterEgo.API.Controllers
         /// <summary>
         /// Uploads new driving video
         /// </summary>
-        /// <remarks>Allows only .jpg</remarks>
+        /// <remarks>Allows only .mp4</remarks>
         /// <param name="file">Video in .mp4 format to be uploaded</param>
         /// <response code="201">File has been created</response>
         /// <response code="415">Only .mp4 extension is allowed</response>
@@ -124,6 +124,25 @@ namespace AlterEgo.API.Controllers
             return CreatedAtAction(nameof(GetOriginalDrivingVideo), new { filename = newVideoInfo.Filename }, newVideoInfo);
         }
 
+        /// <summary>
+        /// Delete video from server
+        /// </summary>
+        /// <param name="filename">Filename of driving video you want to delete.</param>
+        /// <response code="200">File has been deleted</response>
+        /// <response code="403">Logged user does not own this driving video</response>
+        /// <response code="404">File not found on server</response>
+        [Authorize]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(MediaFileInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPatch, Route("{filename}/delete")]
+        public async Task<IActionResult> Delete([Required] string filename)
+        {
+            var login = GetAuthorizedUserLogin();
+            await _drivingVideoManagerService.DeleteFile(filename, login);
+
+            return Ok();
+        }
 
         private string GetAuthorizedUserLogin()
             => _jwtService.GetLoginFromToken(HttpContext.User.Identity as ClaimsIdentity);

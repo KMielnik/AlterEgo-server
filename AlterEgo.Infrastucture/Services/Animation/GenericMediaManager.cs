@@ -152,5 +152,23 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             return ConvertToMediaFileInfo(newMedia, false);
         }
+
+        public async Task DeleteFile(string filename, string userLogin)
+        {
+            _logger.LogDebug("Deleting {Filename} received from {UserLogin}", filename, userLogin);
+
+            var user = await _userRepository.GetAsync(userLogin) ?? throw new UnauthorizedAccessException($"Could not find user with that login [{userLogin}]");
+            var expiredFile = await _mediaRepository.GetAsync(filename) ?? throw new FileNotFoundException($"Couldn't find requested file {filename}");
+
+            var filepath = Path.Combine(_filesLocationPath, expiredFile.Filename);
+
+            File.Delete(filepath);
+
+            expiredFile.SetActualDeletionTime(DateTime.UtcNow);
+
+            await _mediaRepository.UpdateAsync(expiredFile);
+
+            _logger.LogDebug("File of type {TypeName} - {@ExpiredItem} deleted successfully.", typeof(T).Name, expiredFile);
+        }
     }
 }

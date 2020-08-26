@@ -30,8 +30,6 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
             if (_executingTask.IsCompleted)
                 return _executingTask;
 
-
-
             return Task.CompletedTask;
         }
 
@@ -53,6 +51,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
         public void Dispose()
         {
             _stoppingCts.Cancel();
+            _stoppingCts.Dispose();
         }
 
         private async void CatchEventualException()

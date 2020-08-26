@@ -66,7 +66,7 @@ namespace AlterEgo.Tests.Domains
                 _userImage,
                 _userResultVideo);
 
-            task.SetStatusDone();
+            task.SetStatusDone(null);
 
             Assert.AreEqual(task.Status, AnimationTask.Statuses.Done);
         }

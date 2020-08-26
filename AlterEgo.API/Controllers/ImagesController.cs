@@ -126,6 +126,25 @@ namespace AlterEgo.API.Controllers
             return CreatedAtAction(nameof(GetOriginalImage), new { filename = newImageInfo.Filename }, newImageInfo);
         }
 
+        /// <summary>
+        /// Delete image from server
+        /// </summary>
+        /// <param name="filename">Filename of image you want to delete.</param>
+        /// <response code="200">File has been deleted</response>
+        /// <response code="403">Logged user does not own this image</response>
+        /// <response code="404">File not found on server</response>
+        [Authorize]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(MediaFileInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPatch, Route("{filename}/delete")]
+        public async Task<IActionResult> Delete([Required] string filename)
+        {
+            var login = GetAuthorizedUserLogin();
+            await _imageManagerService.DeleteFile(filename, login);
+
+            return Ok();
+        }
 
         private string GetAuthorizedUserLogin()
             => _jwtService.GetLoginFromToken(HttpContext.User.Identity as ClaimsIdentity);
