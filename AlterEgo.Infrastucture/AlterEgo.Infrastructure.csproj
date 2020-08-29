@@ -10,6 +10,10 @@
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>AlterEgo.Infrastructure.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="AlterEgo.Infrastructure.xml" />
   </ItemGroup>
