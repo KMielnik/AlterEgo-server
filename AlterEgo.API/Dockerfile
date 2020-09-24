@@ -21,4 +21,9 @@ RUN dotnet publish "AlterEgo.API.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
+ && DEBIAN_FRONTEND=noninteractive apt-get -qqy install ffmpeg libgdiplus
+
+ENV ASPNETCORE_ENVIRONMENT="Production"
 ENTRYPOINT ["dotnet", "AlterEgo.API.dll"]

@@ -6,8 +6,15 @@ services:
     build:
       context: .
       dockerfile: AlterEgo.API/Dockerfile
+    ports:
+     - "80:80"
+     - "443:443"
+    environment:
+     - "ASPNETCORE_ENVIRONMENT=Production"
+     - "ASPNETCORE_URLS=https://+:443;http://+:80"
     depends_on:
      - db
+     - seq
   db:
     image: "mcr.microsoft.com/mssql/server"
     environment:

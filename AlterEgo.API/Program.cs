@@ -1,11 +1,14 @@
+using AlterEgo.Core.Settings;
 using AlterEgo.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Serilog;
 using System;
+using System.IO;
 
 namespace AlterEgo.API
 {
@@ -33,6 +36,8 @@ namespace AlterEgo.API
                     db.Database.Migrate();
                 }
 
+                InitializeFileDirectories(config.GetSection("FilesLocationSettings").Get<FilesLocationSettings>());
+
                 host.Run();
             }
             catch (Exception ex)
@@ -52,5 +57,13 @@ namespace AlterEgo.API
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        private static void InitializeFileDirectories(FilesLocationSettings settings)
+        {
+            Directory.CreateDirectory(settings.ImagesDirectory);
+            Directory.CreateDirectory(settings.VideosDirectory);
+            Directory.CreateDirectory(settings.OutputDirectory);
+            Directory.CreateDirectory(settings.TempDirectory);
+        }
     }
 }
