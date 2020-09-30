@@ -109,6 +109,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
                 Filename = item.Filename,
                 UserLogin = item.Owner.Login,
                 ExistsUntill = item.PlannedDeletion,
+                IsAvailable = item.ActualDeletion is null,
                 Thumbnail = includeThumbnails ? item.Thumbnail : null
             };
 

@@ -26,6 +26,11 @@ namespace AlterEgo.Core.DTOs
         public DateTime ExistsUntill { get; init; }
 
         /// <summary>
+        /// Is the file available on the server.
+        /// </summary>
+        public bool IsAvailable { get; init; }
+
+        /// <summary>
         /// Thumbnail in jpg format, included only when requested, otherwise null.
         /// </summary>
         public byte[] Thumbnail { get; init; }

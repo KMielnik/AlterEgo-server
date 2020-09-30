@@ -83,7 +83,7 @@ namespace AlterEgo.API.Controllers
         /// <response code="404">File not found on server</response>
         [Authorize]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(MediaFileInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPatch, Route("{filename}/delete")]
         public async Task<IActionResult> Delete([Required] string filename)

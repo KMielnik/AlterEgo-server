@@ -23,7 +23,9 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
- && DEBIAN_FRONTEND=noninteractive apt-get -qqy install ffmpeg libgdiplus
+ && DEBIAN_FRONTEND=noninteractive apt-get -qqy install ffmpeg libgdiplus curl
+RUN curl -fsSL https://get.docker.com -o get-docker.sh \
+ && sh get-docker.sh
 
 ENV ASPNETCORE_ENVIRONMENT="Production"
 ENTRYPOINT ["dotnet", "AlterEgo.API.dll"]
