@@ -157,6 +157,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                         }
                         catch (JsonException ex)
                         {
+                            _logger.LogError(ex, "Returned non-JSON output: {Output}", e.Data);
                             throw new ProcessingAnimationFailedException("Process did not return proper outputevent JSON", ex, e.Data);
                         }
                     }
@@ -258,7 +259,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
                 if (_type == EnviromentTypes.Docker)
                 {
-                    argumentsBuilder.Append(" run -it --rm ");
+                    argumentsBuilder.Append(" run --rm ");
 
                     if (_withGPUSupport)
                         argumentsBuilder.Append(" --gpus all ");
@@ -379,13 +380,13 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             public IEnviromentBuilder WithImagesDirectory(string path)
             {
-                _imagesDirectoryPath = Path.GetFullPath(path);
+                _imagesDirectoryPath = path;
                 return this;
             }
 
             public IEnviromentBuilder WithOutputDirectory(string path)
             {
-                _outputDirectoryPath = Path.GetFullPath(path);
+                _outputDirectoryPath = path;
                 return this;
             }
 
@@ -402,13 +403,13 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             public IEnviromentBuilder WithTempDirectory(string path)
             {
-                _tempDirectoryPath = Path.GetFullPath(path);
+                _tempDirectoryPath = path;
                 return this;
             }
 
             public IEnviromentBuilder WithVideosDirectory(string path)
             {
-                _videosDirectoryPath = Path.GetFullPath(path);
+                _videosDirectoryPath = path;
                 return this;
             }
         }

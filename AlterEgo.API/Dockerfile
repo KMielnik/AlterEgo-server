@@ -5,6 +5,14 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+RUN apt-get update && apt-get -y install \
+  ffmpeg \
+  libgdiplus \
+  curl \
+  && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://get.docker.com -o get-docker.sh \
+ && sh get-docker.sh
+
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["AlterEgo.API/AlterEgo.API.csproj", "AlterEgo.API/"]
@@ -22,10 +30,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
- && DEBIAN_FRONTEND=noninteractive apt-get -qqy install ffmpeg libgdiplus curl
-RUN curl -fsSL https://get.docker.com -o get-docker.sh \
- && sh get-docker.sh
 
-ENV ASPNETCORE_ENVIRONMENT="Production"
 ENTRYPOINT ["dotnet", "AlterEgo.API.dll"]

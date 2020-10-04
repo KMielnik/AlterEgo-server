@@ -54,7 +54,7 @@ namespace AlterEgo.API.Controllers
         [Authorize]
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<MediaFileInfo>), StatusCodes.Status200OK)]
-        [HttpGet, Route("")]
+        [HttpGet, Route("active")]
         public async Task<IActionResult> GetAllActive([FromQuery] bool includeThumbnails = false)
         {
             var login = GetAuthorizedUserLogin();

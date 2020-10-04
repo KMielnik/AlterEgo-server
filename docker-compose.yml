@@ -17,6 +17,10 @@ services:
     volumes:
      - ~/.aspnet/https:/https:ro
      - /var/run/docker.sock:/var/run/docker.sock
+     - ./files/images:/app/files/images
+     - ./files/output:/app/files/output
+     - ./files/temp:/app/files/temp
+     - ./files/videos:/app/files/videos
     depends_on:
      - db
      - seq
@@ -27,6 +31,12 @@ services:
         ACCEPT_EULA: "Y"
     ports:
      - "1433:1433"
+    healthcheck:
+        test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -Q "SELECT 1" || exit 1
+        interval: 10s
+        timeout: 3s
+        retries: 10
+        start_period: 10s
   seq:
     image: "datalust/seq:latest"
     environment:
