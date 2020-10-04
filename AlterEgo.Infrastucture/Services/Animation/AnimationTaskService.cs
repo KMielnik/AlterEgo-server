@@ -55,6 +55,13 @@ namespace AlterEgo.Infrastructure.Services.Animation
             if (drivingVideo.Owner.Login != user.Login)
                 throw new OwnerMismatchException($"{userLogin} does not own requested video.");
 
+            _logger.LogDebug("Refreshing used media");
+
+            image.RefreshPlannedDeletion();
+            await _imageRepository.UpdateAsync(image);
+            drivingVideo.RefreshPlannedDeletion();
+            await _drivingVideoRepository.UpdateAsync(drivingVideo);
+
             var task = new AnimationTask(user, drivingVideo, image, resultVideo, request.RetainAudio, request.ImagePadding);
 
             _logger.LogDebug("Adding {@Task} to database.", task);
@@ -68,8 +75,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
         public IAsyncEnumerable<AnimationTaskDTO> GetAll(string userLogin)
         => _taskRepository.GetAllAsync()
-                .Where(x => x.Owner.Login == userLogin)
-                .Select(x => ConvertToDTO(x));
+            .Where(x => x.Owner.Login == userLogin)
+            .OrderByDescending(x => x.CreatedAt)
+            .Select(x => ConvertToDTO(x));
 
 
         public async Task<AnimationTaskDTO> GetSpecificTask(string id, string userLogin)

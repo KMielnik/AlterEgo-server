@@ -52,7 +52,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                     await CleanExpiredFiles(_resultVideoRepository);
                 }
 
-                await Task.Delay(5000, cancellationToken);
+                await Task.Delay(60 * 1000, cancellationToken);
             }
 
             _logger.LogDebug("{ServiceName} is stopping", nameof(ExpiredFilesCleanerService));

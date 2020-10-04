@@ -176,7 +176,8 @@ namespace AlterEgo.Infrastructure.Services.Animation
             _logger.LogDebug("Getting all {MediaType} for {Login}", typeof(T), userLogin);
 
             var medias = _mediaRepository.GetAllAsync()
-                .Where(x => x.Owner.Login == userLogin);
+                .Where(x => x.Owner.Login == userLogin)
+                .OrderByDescending(x => x.PlannedDeletion);
 
             await foreach (var media in medias)
             {
