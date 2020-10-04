@@ -45,15 +45,14 @@ namespace AlterEgo.Infrastructure.Services.Animation
         {
             _logger.LogDebug("Getting all active {MediaType} for {Login}", typeof(T), userLogin);
 
-            var medias = _mediaRepository.GetAllAsync()
-                .Where(x => x.Owner.Login == userLogin)
-                .Where(x => x.ActualDeletion is null);
+            var activeMediaFiles = GetAllByUser(userLogin, includeThumbnails)
+                .Where(x => x.IsAvailable);
 
-            await foreach (var media in medias)
+            await foreach (var activeMediaFile in activeMediaFiles)
             {
-                _logger.LogDebug("Active {MediaType} found - {@Media}", typeof(T), media);
+                _logger.LogTrace("Active {MediaType} found - {@Media}", typeof(T), activeMediaFile);
 
-                yield return ConvertToMediaFileInfo(media, includeThumbnails);
+                yield return activeMediaFile;
             }
 
             _logger.LogDebug("Finished getting all active {MediaType} for {Login}", typeof(T), userLogin);
@@ -170,6 +169,23 @@ namespace AlterEgo.Infrastructure.Services.Animation
             await _mediaRepository.UpdateAsync(expiredFile);
 
             _logger.LogDebug("File of type {TypeName} - {@ExpiredItem} deleted successfully.", typeof(T).Name, expiredFile);
+        }
+
+        public async IAsyncEnumerable<MediaFileInfo> GetAllByUser(string userLogin, bool includeThumbnails)
+        {
+            _logger.LogDebug("Getting all {MediaType} for {Login}", typeof(T), userLogin);
+
+            var medias = _mediaRepository.GetAllAsync()
+                .Where(x => x.Owner.Login == userLogin);
+
+            await foreach (var media in medias)
+            {
+                _logger.LogTrace("{MediaType} found - {@Media}", typeof(T), media);
+
+                yield return ConvertToMediaFileInfo(media, includeThumbnails);
+            }
+
+            _logger.LogDebug("Finished getting all {MediaType} for {Login}", typeof(T), userLogin);
         }
     }
 }

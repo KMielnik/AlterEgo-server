@@ -41,6 +41,24 @@ namespace AlterEgo.API.Controllers
         {
             var login = GetAuthorizedUserLogin();
 
+            var activeDrivingVideos = await _drivingVideoManagerService.GetAllByUser(login, includeThumbnails).ToListAsync();
+
+            return Ok(activeDrivingVideos);
+        }
+
+        /// <summary>
+        /// Gets list of infos of all logged users active driving videos.
+        /// </summary>
+        /// <param name="includeThumbnails">Indicate if you want thumbnails in response, if not then thumbnail will be null</param>
+        /// <response code="200">Driving videos list</response>
+        [Authorize]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(List<MediaFileInfo>), StatusCodes.Status200OK)]
+        [HttpGet, Route("active")]
+        public async Task<IActionResult> GetAllActive([FromQuery] bool includeThumbnails = false)
+        {
+            var login = GetAuthorizedUserLogin();
+
             var activeDrivingVideos = await _drivingVideoManagerService.GetAllActiveByUser(login, includeThumbnails).ToListAsync();
 
             return Ok(activeDrivingVideos);
