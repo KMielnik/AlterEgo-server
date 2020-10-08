@@ -8,7 +8,7 @@ namespace AlterEgo.Core.Domains
         public bool IsFinished { get; protected set; }
 
         private TimeSpan _plannedLifetime;
-        public ResultVideo(string filename, User owner, TimeSpan plannedLifetime, byte[] thumbnail) : base(filename, owner, TimeSpan.FromDays(365), thumbnail)
+        public ResultVideo(string filename, string originalFilename, User owner, TimeSpan plannedLifetime, byte[] thumbnail) : base(filename, originalFilename, owner, TimeSpan.FromDays(365), thumbnail)
         {
             IsFinished = false;
 

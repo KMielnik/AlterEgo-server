@@ -15,6 +15,12 @@ namespace AlterEgo.Core.DTOs
         public string Filename { get; init; }
 
         /// <summary>
+        /// Original filename
+        /// </summary>
+        /// <example>originalImage</example>
+        public string OriginalFilename { get; init; }
+
+        /// <summary>
         /// Login of user who owns this image
         /// </summary>
         /// <example>login123</example>

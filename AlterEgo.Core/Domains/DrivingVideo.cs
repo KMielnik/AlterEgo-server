@@ -5,7 +5,7 @@ namespace AlterEgo.Core.Domains
 {
     public class DrivingVideo : MediaResource
     {
-        public DrivingVideo(string filename, User owner, TimeSpan plannedLifetime, byte[] thumbnail) : base(filename, owner, plannedLifetime, thumbnail)
+        public DrivingVideo(string filename, string originalFilename, User owner, TimeSpan plannedLifetime, byte[] thumbnail) : base(filename, originalFilename, owner, plannedLifetime, thumbnail)
         {
         }
 

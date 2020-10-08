@@ -106,6 +106,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
             => new MediaFileInfo
             {
                 Filename = item.Filename,
+                OriginalFilename = item.OriginalFilename,
                 UserLogin = item.Owner.Login,
                 ExistsUntill = item.PlannedDeletion,
                 IsAvailable = item.ActualDeletion is null,
@@ -140,9 +141,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             var newMedia = (T)Convert.ChangeType(typeof(T) switch
             {
-                Type t when t == typeof(Image) => new Image(newFilename, user, TimeSpan.FromHours(6), thumbnail),
-                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
-                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(Image) => new Image(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromHours(6), thumbnail),
                 _ => throw new ApplicationException($"Unkonwn type of Media, {typeof(T)} is not known.")
             }, typeof(T));
 

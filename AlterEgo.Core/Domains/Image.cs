@@ -5,7 +5,7 @@ namespace AlterEgo.Core.Domains
 {
     public class Image : MediaResource
     {
-        public Image(string filename, User owner, TimeSpan plannedLifetime, byte[] thumbnail) : base(filename, owner, plannedLifetime, thumbnail)
+        public Image(string filename, string originalFilename, User owner, TimeSpan plannedLifetime, byte[] thumbnail) : base(filename, originalFilename, owner, plannedLifetime, thumbnail)
         {
         }
 

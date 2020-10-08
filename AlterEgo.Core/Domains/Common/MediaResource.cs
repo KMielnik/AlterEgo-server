@@ -6,6 +6,7 @@ namespace AlterEgo.Core.Domains.Common
     public abstract class MediaResource
     {
         public string Filename { get; protected set; }
+        public string OriginalFilename { get; protected set; }
         public User Owner { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime PlannedDeletion { get; protected set; }
@@ -15,9 +16,10 @@ namespace AlterEgo.Core.Domains.Common
 
         public TimeSpan PlannedLifetime { get; protected set; }
 
-        public MediaResource(string filename, User owner, TimeSpan plannedLifetime, byte[] thumbnail)
+        public MediaResource(string filename, string originalFilename, User owner, TimeSpan plannedLifetime, byte[] thumbnail)
         {
             SetFilename(filename);
+            SetOriginalFilename(originalFilename);
             SetOwner(owner);
 
             PlannedLifetime = plannedLifetime;
@@ -50,6 +52,16 @@ namespace AlterEgo.Core.Domains.Common
                 string s when !Regex.IsMatch(s, "^[A-Za-z0-9_.-]+$") => throw new ArgumentException("Illegal characters.",
                     nameof(filename)),
                 _ => filename,
+            };
+
+        private void SetOriginalFilename(string originalFilename)
+            => OriginalFilename = originalFilename switch
+            {
+                null => throw new ArgumentNullException(nameof(originalFilename)),
+                { Length: <= 0 } => throw new ArgumentException("Cannot be empty", nameof(originalFilename)),
+                string s when !Regex.IsMatch(s, "^[A-Za-z0-9_-]+$") => throw new ArgumentException("Illegal characters.",
+                    nameof(originalFilename)),
+                _ => originalFilename,
             };
 
         private void SetOwner(User owner)
