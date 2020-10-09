@@ -33,7 +33,7 @@ namespace AlterEgo.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<ErrorHandlerMiddleware>();
-            
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

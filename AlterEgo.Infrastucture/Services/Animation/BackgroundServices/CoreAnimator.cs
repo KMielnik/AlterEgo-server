@@ -27,7 +27,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
         public CoreAnimator(
             IOptions<CoreAnimatorSettings> animatorSettings,
             IOptions<FilesLocationSettings> filesLocationSettings,
-            ILogger<CoreAnimator> logger, 
+            ILogger<CoreAnimator> logger,
             IThumbnailGenerator thumbnailGenerator)
         {
             _animatorSettings = animatorSettings.Value;
@@ -112,6 +112,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                     .WithVideosDirectory(_filesLocationSettings.VideosDirectory)
                     .WithTempDirectory(_filesLocationSettings.TempDirectory)
                     .WithOutputDirectory(_filesLocationSettings.OutputDirectory)
+                    .IncludeEnviromentVariables()
                     .WithParameters();
 
             if (_animatorSettings.UsingGPU)
@@ -152,13 +153,14 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                     {
                         try
                         {
+                            _logger.LogTrace("CoreAnimator received outputline: {Line}", e.Data);
                             var outputEvent = JsonSerializer.Deserialize<OutputEvent>(e.Data);
                             eventsQueue.Enqueue(outputEvent);
                         }
                         catch (JsonException ex)
                         {
                             _logger.LogError(ex, "Returned non-JSON output: {Output}", e.Data);
-                            throw new ProcessingAnimationFailedException("Process did not return proper outputevent JSON", ex, e.Data);
+                            throw new ProcessingAnimationFailedException($"Process did not return proper outputevent JSON, received {e.Data}", ex, e.Data);
                         }
                     }
                 };
@@ -305,7 +307,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                     argumentsBuilder.Append($" --image_padding {_customImagePadding} ");
 
                 if (_withGPUSupport)
-                    argumentsBuilder.Append(" --crop --find_best_frame");
+                    argumentsBuilder.Append(" --crop --find_best_frame --gpu");
 
                 argumentsBuilder.Append(" --api ");
 
@@ -380,13 +382,13 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             public IEnviromentBuilder WithImagesDirectory(string path)
             {
-                _imagesDirectoryPath = path;
+                _imagesDirectoryPath = Path.GetFullPath(path);
                 return this;
             }
 
             public IEnviromentBuilder WithOutputDirectory(string path)
             {
-                _outputDirectoryPath = path;
+                _outputDirectoryPath = Path.GetFullPath(path);
                 return this;
             }
 
@@ -403,13 +405,25 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             public IEnviromentBuilder WithTempDirectory(string path)
             {
-                _tempDirectoryPath = path;
+                _tempDirectoryPath = Path.GetFullPath(path);
                 return this;
             }
 
             public IEnviromentBuilder WithVideosDirectory(string path)
             {
-                _videosDirectoryPath = path;
+                _videosDirectoryPath = Path.GetFullPath(path);
+                return this;
+            }
+
+            public IEnviromentBuilder IncludeEnviromentVariables()
+            {
+                _imagesDirectoryPath = Environment.GetEnvironmentVariable("ALTEREGO_IMAGES_FOLDER") ?? _imagesDirectoryPath;
+                _videosDirectoryPath = Environment.GetEnvironmentVariable("ALTEREGO_VIDEOS_FOLDER") ?? _videosDirectoryPath;
+                _outputDirectoryPath = Environment.GetEnvironmentVariable("ALTEREGO_OUTPUT_FOLDER") ?? _outputDirectoryPath;
+                _tempDirectoryPath = Environment.GetEnvironmentVariable("ALTEREGO_TEMP_FOLDER") ?? _tempDirectoryPath;
+
+                _withGPUSupport = Environment.GetEnvironmentVariable("ALTEREGO_GPU_SUPPORT")?.Equals("Y") ?? _withGPUSupport;
+
                 return this;
             }
         }
@@ -423,6 +437,8 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
             IEnviromentBuilder WithVideosDirectory(string path);
             IEnviromentBuilder WithOutputDirectory(string path);
             IEnviromentBuilder WithTempDirectory(string path);
+
+            IEnviromentBuilder IncludeEnviromentVariables();
 
             IOptionsCommandBuilder WithParameters();
         }

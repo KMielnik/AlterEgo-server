@@ -31,7 +31,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
             IGenericMediaRepository<T> mediaRepository,
             IUserRepository userRepository,
             string filesLocationPath,
-            ILogger<GenericMediaManager<T>> logger, 
+            ILogger<GenericMediaManager<T>> logger,
             IThumbnailGenerator thumbnailGenerator)
         {
             _mediaRepository = mediaRepository;
@@ -141,9 +141,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             var newMedia = (T)Convert.ChangeType(typeof(T) switch
             {
-                Type t when t == typeof(Image) => new Image(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromHours(6), thumbnail),
-                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromHours(6), thumbnail),
-                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(Image) => new Image(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromDays(2), thumbnail),
+                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromDays(2), thumbnail),
+                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromDays(2), thumbnail),
                 _ => throw new ApplicationException($"Unkonwn type of Media, {typeof(T)} is not known.")
             }, typeof(T));
 

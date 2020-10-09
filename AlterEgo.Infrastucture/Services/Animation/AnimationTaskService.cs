@@ -45,9 +45,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
             var drivingVideo = await _drivingVideoRepository.GetAsync(request.SourceVideo) ?? throw new OwnerMismatchException("User does not own video with that filename");
             var resultVideo = new ResultVideo(
                 Guid.NewGuid() + ".mp4",
-                $"{image.OriginalFilename}:{drivingVideo.OriginalFilename}",
+                $"{Path.GetFileNameWithoutExtension(image.OriginalFilename)}_{Path.GetFileNameWithoutExtension(drivingVideo.OriginalFilename)}",
                 user,
-                TimeSpan.FromHours(6),
+                TimeSpan.FromDays(2),
                 null);
 
             if (image.Owner.Login != user.Login)

@@ -31,14 +31,12 @@ namespace AlterEgo.API
                 Log.Information("Web host started");
 
                 var host = CreateHostBuilder(args).Build();
-                    
-                using(var scope = host.Services.CreateScope())
+
+                using (var scope = host.Services.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<AlterEgoContext>();
                     db.Database.Migrate();
                 }
-
-                InitializeFileDirectories(config.GetSection("FilesLocationSettings").Get<FilesLocationSettings>());
 
                 host.Run();
             }
@@ -59,13 +57,5 @@ namespace AlterEgo.API
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-        private static void InitializeFileDirectories(FilesLocationSettings settings)
-        {
-            Directory.CreateDirectory(settings.ImagesDirectory);
-            Directory.CreateDirectory(settings.VideosDirectory);
-            Directory.CreateDirectory(settings.OutputDirectory);
-            Directory.CreateDirectory(settings.TempDirectory);
-        }
     }
 }
