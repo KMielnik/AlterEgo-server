@@ -27,6 +27,7 @@ namespace AlterEgo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Filename = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OriginalFilename = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     OwnerLogin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlannedDeletion = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -50,6 +51,7 @@ namespace AlterEgo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Filename = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OriginalFilename = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     OwnerLogin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlannedDeletion = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -73,6 +75,7 @@ namespace AlterEgo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Filename = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OriginalFilename = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     OwnerLogin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlannedDeletion = table.Column<DateTime>(type: "datetime2", nullable: false),

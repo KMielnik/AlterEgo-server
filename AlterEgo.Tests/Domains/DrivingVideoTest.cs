@@ -32,6 +32,7 @@ namespace AlterEgo.Tests.Domains
 
             var video = new DrivingVideo(
                 filename,
+                "filename",
                 _validUser,
                 plannedTimespan,
                 null);
@@ -51,6 +52,7 @@ namespace AlterEgo.Tests.Domains
             Assert.ThrowsException<ArgumentException>(()
                 => new DrivingVideo(
                     filename,
+                    "filename",
                     _validUser,
                     TimeSpan.Zero,
                     null));

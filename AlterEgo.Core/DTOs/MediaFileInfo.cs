@@ -15,6 +15,12 @@ namespace AlterEgo.Core.DTOs
         public string Filename { get; init; }
 
         /// <summary>
+        /// Original filename
+        /// </summary>
+        /// <example>originalImage</example>
+        public string OriginalFilename { get; init; }
+
+        /// <summary>
         /// Login of user who owns this image
         /// </summary>
         /// <example>login123</example>
@@ -24,6 +30,11 @@ namespace AlterEgo.Core.DTOs
         /// Time of planned deletion of resource
         /// </summary>
         public DateTime ExistsUntill { get; init; }
+
+        /// <summary>
+        /// Is the file available on the server.
+        /// </summary>
+        public bool IsAvailable { get; init; }
 
         /// <summary>
         /// Thumbnail in jpg format, included only when requested, otherwise null.

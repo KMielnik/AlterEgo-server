@@ -28,18 +28,21 @@ namespace AlterEgo.Tests.Domains
 
             _userImage = new Image(
                 "filename.jpg",
+                "filename",
                 _user,
                 TimeSpan.Zero,
                 null);
 
             _userDrivingVideo = new DrivingVideo(
                 "filename.mp4",
+                "filename",
                 _user,
                 TimeSpan.Zero,
                 null);
 
             _userResultVideo = new ResultVideo(
                 "resultFilename.mp4",
+                "filename",
                 _user,
                 TimeSpan.Zero,
                 null);
@@ -83,6 +86,7 @@ namespace AlterEgo.Tests.Domains
 
             var imageDiffrentOwner = new Image(
                 "filename.png",
+                "filename",
                 diffrentOwner,
                 TimeSpan.Zero,
                 null);

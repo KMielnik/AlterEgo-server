@@ -31,7 +31,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
             IGenericMediaRepository<T> mediaRepository,
             IUserRepository userRepository,
             string filesLocationPath,
-            ILogger<GenericMediaManager<T>> logger, 
+            ILogger<GenericMediaManager<T>> logger,
             IThumbnailGenerator thumbnailGenerator)
         {
             _mediaRepository = mediaRepository;
@@ -45,15 +45,14 @@ namespace AlterEgo.Infrastructure.Services.Animation
         {
             _logger.LogDebug("Getting all active {MediaType} for {Login}", typeof(T), userLogin);
 
-            var medias = _mediaRepository.GetAllAsync()
-                .Where(x => x.Owner.Login == userLogin)
-                .Where(x => x.ActualDeletion is null);
+            var activeMediaFiles = GetAllByUser(userLogin, includeThumbnails)
+                .Where(x => x.IsAvailable);
 
-            await foreach (var media in medias)
+            await foreach (var activeMediaFile in activeMediaFiles)
             {
-                _logger.LogDebug("Active {MediaType} found - {@Media}", typeof(T), media);
+                _logger.LogTrace("Active {MediaType} found - {@Media}", typeof(T), activeMediaFile);
 
-                yield return ConvertToMediaFileInfo(media, includeThumbnails);
+                yield return activeMediaFile;
             }
 
             _logger.LogDebug("Finished getting all active {MediaType} for {Login}", typeof(T), userLogin);
@@ -107,8 +106,10 @@ namespace AlterEgo.Infrastructure.Services.Animation
             => new MediaFileInfo
             {
                 Filename = item.Filename,
+                OriginalFilename = item.OriginalFilename,
                 UserLogin = item.Owner.Login,
                 ExistsUntill = item.PlannedDeletion,
+                IsAvailable = item.ActualDeletion is null,
                 Thumbnail = includeThumbnails ? item.Thumbnail : null
             };
 
@@ -140,9 +141,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             var newMedia = (T)Convert.ChangeType(typeof(T) switch
             {
-                Type t when t == typeof(Image) => new Image(newFilename, user, TimeSpan.FromHours(6), thumbnail),
-                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
-                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, user, TimeSpan.FromHours(6), thumbnail),
+                Type t when t == typeof(Image) => new Image(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromDays(2), thumbnail),
+                Type t when t == typeof(DrivingVideo) => new DrivingVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromDays(2), thumbnail),
+                Type t when t == typeof(ResultVideo) => new ResultVideo(newFilename, Path.GetFileNameWithoutExtension(originalFilename), user, TimeSpan.FromDays(2), thumbnail),
                 _ => throw new ApplicationException($"Unkonwn type of Media, {typeof(T)} is not known.")
             }, typeof(T));
 
@@ -169,6 +170,24 @@ namespace AlterEgo.Infrastructure.Services.Animation
             await _mediaRepository.UpdateAsync(expiredFile);
 
             _logger.LogDebug("File of type {TypeName} - {@ExpiredItem} deleted successfully.", typeof(T).Name, expiredFile);
+        }
+
+        public async IAsyncEnumerable<MediaFileInfo> GetAllByUser(string userLogin, bool includeThumbnails)
+        {
+            _logger.LogDebug("Getting all {MediaType} for {Login}", typeof(T), userLogin);
+
+            var medias = _mediaRepository.GetAllAsync()
+                .Where(x => x.Owner.Login == userLogin)
+                .OrderByDescending(x => x.PlannedDeletion);
+
+            await foreach (var media in medias)
+            {
+                _logger.LogTrace("{MediaType} found - {@Media}", typeof(T), media);
+
+                yield return ConvertToMediaFileInfo(media, includeThumbnails);
+            }
+
+            _logger.LogDebug("Finished getting all {MediaType} for {Login}", typeof(T), userLogin);
         }
     }
 }

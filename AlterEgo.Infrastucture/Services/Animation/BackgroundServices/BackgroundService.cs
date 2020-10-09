@@ -63,6 +63,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "BackgroundService encountered unhandled exception, exiting application...");
+
                 _appLifetime.StopApplication();
             }
         }

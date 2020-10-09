@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+  alterego.api:
+    image: ${DOCKER_REGISTRY-}alteregoapi
+    build:
+      context: .
+      dockerfile: AlterEgo.API/Dockerfile
+    ports:
+     - "80:80"
+     - "443:443"
+    environment:
+     ASPNETCORE_ENVIRONMENT: Docker
+     ASPNETCORE_URLS: https://+:443;http://+:80
+     ASPNETCORE_Kestrel__Certificates__Default__Password: password123
+     ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+
+     ALTEREGO_IMAGES_FOLDER: /home/kamil/AlterEgo-Files/images
+     ALTEREGO_VIDEOS_FOLDER: /home/kamil/AlterEgo-Files/videos
+     ALTEREGO_OUTPUT_FOLDER: /home/kamil/AlterEgo-Files/output
+     ALTEREGO_TEMP_FOLDER: /home/kamil/AlterEgo-Files/temp
+     ALTEREGO_GPU_SUPPORT: Y
+    volumes:
+     - ~/.aspnet/https:/https:ro
+     - /var/run/docker.sock:/var/run/docker.sock
+     - ~/AlterEgo-Files/images:/app/files/images
+     - ~/AlterEgo-Files/output:/app/files/output
+     - ~/AlterEgo-Files/temp:/app/files/temp
+     - ~/AlterEgo-Files/videos:/app/files/videos
+    depends_on:
+     - db
+     - seq
+     - alterego-core
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+        SA_PASSWORD: "Password1"
+        ACCEPT_EULA: "Y"
+    ports:
+     - "1433:1433"
+    healthcheck:
+        test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -Q "SELECT 1" || exit 1
+        interval: 10s
+        timeout: 3s
+        retries: 10
+        start_period: 10s
+  seq:
+    image: "datalust/seq:latest"
+    environment:
+       ACCEPT_EULA: "Y"
+    ports:
+     - "5391:80"
+  alterego-core:
+    image: "kamilmielnik/alterego-core:2.0.4"

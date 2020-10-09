@@ -25,7 +25,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
         public ExpiredFilesCleanerService(
             ILogger<ExpiredFilesCleanerService> logger,
             IServiceScopeFactory scopeFactory,
-            IHostApplicationLifetime appLifetime, 
+            IHostApplicationLifetime appLifetime,
             IOptions<FilesLocationSettings> filesLocationSettings) : base(logger, appLifetime)
         {
             _logger = logger;
@@ -52,13 +52,13 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                     await CleanExpiredFiles(_resultVideoRepository);
                 }
 
-                await Task.Delay(5000, cancellationToken);
+                await Task.Delay((int)TimeSpan.FromMinutes(1).TotalMilliseconds, cancellationToken);
             }
 
             _logger.LogDebug("{ServiceName} is stopping", nameof(ExpiredFilesCleanerService));
         }
 
-        private async Task CleanExpiredFiles<T>(IGenericMediaRepository<T> repository) where T: MediaResource
+        private async Task CleanExpiredFiles<T>(IGenericMediaRepository<T> repository) where T : MediaResource
         {
             var expiredItems = await repository
                 .GetAllAsync()
@@ -74,13 +74,20 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                 _ => throw new ApplicationException($"Unkown type of Media, {typeof(T)} is not known")
             };
 
-            foreach(var expiredItem in expiredItems)
+            foreach (var expiredItem in expiredItems)
             {
                 _logger.LogDebug("File of type {TypeName} - {@ExpiredItem} has expired - deleting.", typeof(T).Name, expiredItem);
 
                 var fileLocation = Path.Combine(location, expiredItem.Filename);
 
                 File.Delete(fileLocation);
+
+                if (typeof(T) == typeof(DrivingVideo))
+                {
+                    var tempFolderLocation = Path.Combine(_filesLocationSettings.TempDirectory, expiredItem.Filename);
+
+                    Directory.Delete(tempFolderLocation);
+                }
 
                 expiredItem.SetActualDeletionTime(DateTime.UtcNow);
 

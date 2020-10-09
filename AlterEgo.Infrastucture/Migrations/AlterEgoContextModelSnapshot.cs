@@ -67,6 +67,9 @@ namespace AlterEgo.Infrastructure.Migrations
                     b.Property<string>("Filename")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("OriginalFilename")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("ActualDeletion")
                         .HasColumnType("datetime2");
 
@@ -97,6 +100,9 @@ namespace AlterEgo.Infrastructure.Migrations
                     b.Property<string>("Filename")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("OriginalFilename")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("ActualDeletion")
                         .HasColumnType("datetime2");
 
@@ -125,6 +131,9 @@ namespace AlterEgo.Infrastructure.Migrations
             modelBuilder.Entity("AlterEgo.Core.Domains.ResultVideo", b =>
                 {
                     b.Property<string>("Filename")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OriginalFilename")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("ActualDeletion")
