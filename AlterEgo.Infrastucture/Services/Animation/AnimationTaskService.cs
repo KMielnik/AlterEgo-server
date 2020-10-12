@@ -47,7 +47,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
                 Guid.NewGuid() + ".mp4",
                 $"{Path.GetFileNameWithoutExtension(image.OriginalFilename)}_{Path.GetFileNameWithoutExtension(drivingVideo.OriginalFilename)}",
                 user,
-                TimeSpan.FromDays(2),
+                TimeSpan.FromHours(18),
                 null);
 
             if (image.Owner.Login != user.Login)

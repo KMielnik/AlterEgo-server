@@ -51,4 +51,4 @@ services:
     ports:
      - "5391:80"
   alterego-core:
-    image: "kamilmielnik/alterego-core:2.0.4"
+    image: "kamilmielnik/alterego-core:2.0.5"
