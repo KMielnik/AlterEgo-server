@@ -22,7 +22,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
         private Engine _ffmpeg;
 
         public ThumbnailGenerator(
-            ILogger<ThumbnailGenerator> logger, 
+            ILogger<ThumbnailGenerator> logger,
             IOptions<FFmpegSettings> ffmpegSettings)
         {
             _logger = logger;
@@ -47,7 +47,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
         private (int targetWidth, int targetHeight) GetThumbnailResolution(int originalWidth, int originalHeight)
         {
-            var ratio =  ((double)originalWidth) / originalHeight;
+            var ratio = ((double)originalWidth) / originalHeight;
 
             var baseSize = Math.Min(256, Math.Max(originalWidth, originalHeight));
 
@@ -76,9 +76,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
             _logger.LogDebug("Generating thumbnail for {FilePath}, from resolution {@OriginalResolution} to {@TargetResolution}", filepath, originalDimensions, thumbnailDimensions);
 
             using var thumbnail = image.GetThumbnailImage(
-                thumbnailDimensions.targetWidth, 
-                thumbnailDimensions.targetHeight, 
-                null, 
+                thumbnailDimensions.targetWidth,
+                thumbnailDimensions.targetHeight,
+                null,
                 new IntPtr());
 
             thumbnail.Save(ms, ImageFormat.Jpeg);
@@ -100,16 +100,16 @@ namespace AlterEgo.Infrastructure.Services.Animation
                 .Select(x => int.Parse(x))
                 .ToList();
 
-            var targetSize = GetThumbnailResolution(originalSize[1], originalSize[0]);
+            var targetSize = GetThumbnailResolution(originalSize[0], originalSize[1]);
 
             _logger.LogDebug("Original video size: {@OriginalSize},  target thumbnail size {TargetSize}", originalSize, targetSize);
 
             _logger.LogDebug("Starting generation of thumbnail in {ThumbnailPath} for video {VideoPath}", outputPath, filepath);
 
-            await _ffmpeg.GetThumbnailAsync(input, 
+            await _ffmpeg.GetThumbnailAsync(input,
                 output,
-                new ConversionOptions 
-                { 
+                new ConversionOptions
+                {
                     Seek = TimeSpan.Zero,
                     VideoSize = FFmpeg.NET.Enums.VideoSize.Custom,
                     CustomWidth = targetSize.targetWidth,
