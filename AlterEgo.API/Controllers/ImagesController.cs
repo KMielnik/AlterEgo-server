@@ -105,7 +105,7 @@ namespace AlterEgo.API.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(MediaFileInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpPatch, Route("{filename}")]
+        [HttpPatch, Route("{filename}/refresh")]
         public async Task<IActionResult> Refresh(string filename)
         {
             var login = GetAuthorizedUserLogin();
