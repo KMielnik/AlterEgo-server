@@ -80,13 +80,15 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
                 var fileLocation = Path.Combine(location, expiredItem.Filename);
 
-                File.Delete(fileLocation);
+                if (File.Exists(fileLocation))
+                    File.Delete(fileLocation);
 
                 if (typeof(T) == typeof(DrivingVideo))
                 {
                     var tempFolderLocation = Path.Combine(_filesLocationSettings.TempDirectory, Path.GetFileNameWithoutExtension(expiredItem.Filename));
 
-                    Directory.Delete(tempFolderLocation, true);
+                    if (Directory.Exists(tempFolderLocation))
+                        Directory.Delete(tempFolderLocation, true);
                 }
 
                 expiredItem.SetActualDeletionTime(DateTime.UtcNow);

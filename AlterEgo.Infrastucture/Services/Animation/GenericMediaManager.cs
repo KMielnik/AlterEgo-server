@@ -25,6 +25,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
         private readonly IThumbnailGenerator _thumbnailGenerator;
 
         private readonly string _filesLocationPath;
+        private readonly string _tempLocationPath;
         private readonly ILogger<GenericMediaManager<T>> _logger;
 
         public GenericMediaManager(
@@ -32,13 +33,16 @@ namespace AlterEgo.Infrastructure.Services.Animation
             IUserRepository userRepository,
             string filesLocationPath,
             ILogger<GenericMediaManager<T>> logger,
-            IThumbnailGenerator thumbnailGenerator)
+            IThumbnailGenerator thumbnailGenerator,
+            string tempLocationPath = null)
         {
             _mediaRepository = mediaRepository;
             _userRepository = userRepository;
             _filesLocationPath = filesLocationPath;
             _logger = logger;
             _thumbnailGenerator = thumbnailGenerator;
+
+            _tempLocationPath = tempLocationPath;
         }
 
         public async IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin, bool includeThumbnails)
@@ -159,17 +163,29 @@ namespace AlterEgo.Infrastructure.Services.Animation
             _logger.LogDebug("Deleting {Filename} received from {UserLogin}", filename, userLogin);
 
             var user = await _userRepository.GetAsync(userLogin) ?? throw new UnauthorizedAccessException($"Could not find user with that login [{userLogin}]");
-            var expiredFile = await _mediaRepository.GetAsync(filename) ?? throw new FileNotFoundException($"Couldn't find requested file {filename}");
+            var fileForDeletion = await _mediaRepository.GetAsync(filename) ?? throw new FileNotFoundException($"Couldn't find requested file {filename}");
 
-            var filepath = Path.Combine(_filesLocationPath, expiredFile.Filename);
+            if (fileForDeletion.Owner != user)
+                throw new OwnerMismatchException("This user does not own this media.");
 
-            File.Delete(filepath);
+            var filepath = Path.Combine(_filesLocationPath, fileForDeletion.Filename);
 
-            expiredFile.SetActualDeletionTime(DateTime.UtcNow);
+            if(File.Exists(filepath))
+                File.Delete(filepath);
 
-            await _mediaRepository.UpdateAsync(expiredFile);
+            if (fileForDeletion is DrivingVideo)
+            {
+                var tempFolderLocation = Path.Combine(_tempLocationPath, Path.GetFileNameWithoutExtension(fileForDeletion.Filename));
 
-            _logger.LogDebug("File of type {TypeName} - {@ExpiredItem} deleted successfully.", typeof(T).Name, expiredFile);
+                if (Directory.Exists(tempFolderLocation))
+                    Directory.Delete(tempFolderLocation, true);
+            }
+
+            fileForDeletion.SetActualDeletionTime(DateTime.UtcNow);
+
+            await _mediaRepository.DeleteAsync(fileForDeletion);
+
+            _logger.LogDebug("File of type {TypeName} - {@ExpiredItem} deleted successfully.", typeof(T).Name, fileForDeletion);
         }
 
         public async IAsyncEnumerable<MediaFileInfo> GetAllByUser(string userLogin, bool includeThumbnails)
