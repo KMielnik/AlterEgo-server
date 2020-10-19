@@ -26,7 +26,8 @@ namespace AlterEgo.Infrastructure.Services.Animation
                   userRepository,
                   filesLocationSettings.Value.VideosDirectory,
                   logger,
-                  thumbnailGenerator)
+                  thumbnailGenerator,
+                  filesLocationSettings.Value.TempDirectory)
         { }
     }
 }
