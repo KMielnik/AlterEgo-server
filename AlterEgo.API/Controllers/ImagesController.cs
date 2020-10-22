@@ -60,7 +60,7 @@ namespace AlterEgo.API.Controllers
         {
             var login = GetAuthorizedUserLogin();
 
-            var activeImages = await _imageManagerService.GetAllActiveByUser(login, includeThumbnails).ToListAsync();
+            var activeImages = await _imageManagerService.GetAllByUser(login, includeThumbnails).ToListAsync();
 
             return Ok(activeImages);
         }
