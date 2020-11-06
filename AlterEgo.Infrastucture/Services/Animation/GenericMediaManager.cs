@@ -205,5 +205,24 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             _logger.LogDebug("Finished getting all {MediaType} for {Login}", typeof(T), userLogin);
         }
+
+        public async Task<MediaFileInfo> GetSingle(string userLogin, bool includeThumbnails, string filename)
+        {
+            _logger.LogDebug("Getting {MediaType} for {Login} filename - {Filename}", typeof(T), userLogin, filename);
+
+            var user = await _userRepository.GetAsync(userLogin) ?? throw new UnauthorizedAccessException($"Could not find user with that login [{userLogin}]");
+            var file = await _mediaRepository.GetAsync(filename) ?? throw new FileNotFoundException($"Couldn't find requested file {filename}");
+
+            if (file.Owner.Login != user.Login)
+            {
+                _logger.LogError("{@User} does not own the {@File}}", user, file);
+
+                throw new OwnerMismatchException($"User {user.Login} does not own the file {file.Filename}");
+            }
+
+            _logger.LogTrace("{MediaType} found - {@Media}", typeof(T), file);
+
+            return ConvertToMediaFileInfo(file, includeThumbnails);
+        }
     }
 }

@@ -66,6 +66,25 @@ namespace AlterEgo.API.Controllers
         }
 
         /// <summary>
+        /// Gets single media info of logged user.
+        /// </summary>
+        /// <param name="includeThumbnails">Indicate if you want thumbnail in response, if not then thumbnail will be null</param>
+        /// <param name="filename">Filename of image you want to download</param>
+        /// <response code="200">Image media info</response>
+        [Authorize]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(List<MediaFileInfo>), StatusCodes.Status200OK)]
+        [HttpGet, Route("{filename}")]
+        public async Task<IActionResult> GetSingle(string filename, [FromQuery] bool includeThumbnails = false)
+        {
+            var login = GetAuthorizedUserLogin();
+
+            var requestedMedia = await _imageManagerService.GetSingle(login, includeThumbnails, filename);
+
+            return Ok(requestedMedia);
+        }
+
+        /// <summary>
         /// Gets image in original resolution
         /// </summary>
         /// <param name="filename">Filename of image you want to download</param>
@@ -76,7 +95,7 @@ namespace AlterEgo.API.Controllers
         [Produces("image/jpeg")]
         [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet, Route("{filename}")]
+        [HttpGet, Route("{filename}/file")]
         public async Task<IActionResult> GetOriginalImage(string filename)
         {
             var login = GetAuthorizedUserLogin();

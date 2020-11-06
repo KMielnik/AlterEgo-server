@@ -17,5 +17,6 @@ namespace AlterEgo.Core.Interfaces.Animation
         Task DeleteFile(string filename, string userLogin);
         IAsyncEnumerable<MediaFileInfo> GetAllActiveByUser(string userLogin, bool includeThumbnails);
         IAsyncEnumerable<MediaFileInfo> GetAllByUser(string userLogin, bool includeThumbnails);
+        Task<MediaFileInfo> GetSingle(string userLogin, bool includeThumbnails, string filename);
     }
 }
