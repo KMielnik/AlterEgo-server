@@ -51,6 +51,7 @@ namespace AlterEgo.API.Controllers
         /// </summary>
         /// <param name="includeThumbnails">Indicate if you want thumbnail in response, if not then thumbnail will be null</param>
         /// <param name="filename">Filename of result video you want to download</param>
+        /// <response code="404">File not found on server</response>
         /// <response code="200">Result videos media info</response>
         [Authorize]
         [Produces("application/json")]
