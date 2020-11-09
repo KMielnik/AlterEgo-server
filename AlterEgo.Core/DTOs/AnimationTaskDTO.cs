@@ -23,22 +23,19 @@ namespace AlterEgo.Core.DTOs
         public string Owner { get; init; }
 
         /// <summary>
-        /// Filename of source video
+        /// MediaFileInfo of source video
         /// </summary>
-        /// <example>video.mp4</example>
-        public string SourceVideo { get; init; }
+        public MediaFileInfo SourceVideo { get; init; }
 
         /// <summary>
-        /// Filename of source image
+        /// MediaFileInfo of source image
         /// </summary>
-        /// <example>video.jpg</example>
-        public string SourceImage { get; init; }
+        public MediaFileInfo SourceImage { get; init; }
 
         /// <summary>
-        /// Filename of result video
+        /// MediaFileInfo of result video
         /// </summary>
-        /// <example>video.mp4</example>
-        public string ResultAnimation { get; init; }
+        public MediaFileInfo ResultAnimation { get; init; }
 
         /// <summary>
         /// Value indicating if audio retention was requested.

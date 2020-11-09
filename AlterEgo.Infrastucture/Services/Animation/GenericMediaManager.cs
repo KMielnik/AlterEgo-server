@@ -106,7 +106,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
             return file;
         }
 
-        private MediaFileInfo ConvertToMediaFileInfo(T item, bool includeThumbnails)
+        public static MediaFileInfo ConvertToMediaFileInfo(T item, bool includeThumbnails)
             => new MediaFileInfo
             {
                 Filename = item.Filename,

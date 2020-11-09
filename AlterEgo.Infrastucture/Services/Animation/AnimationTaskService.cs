@@ -100,9 +100,9 @@ namespace AlterEgo.Infrastructure.Services.Animation
         {
             Id = task.Id,
             Owner = task.Owner.Login,
-            SourceVideo = task.SourceVideo.Filename,
-            SourceImage = task.SourceImage.Filename,
-            ResultAnimation = task.ResultAnimation.Filename,
+            SourceVideo = GenericMediaManager<DrivingVideo>.ConvertToMediaFileInfo(task.SourceVideo, true),
+            SourceImage = GenericMediaManager<Image>.ConvertToMediaFileInfo(task.SourceImage, true),
+            ResultAnimation = GenericMediaManager<ResultVideo>.ConvertToMediaFileInfo(task.ResultAnimation, true),
             RetainAudio = task.RetainAudio,
             ImagePadding = task.ImagePadding,
             CreatedAt = task.CreatedAt,
