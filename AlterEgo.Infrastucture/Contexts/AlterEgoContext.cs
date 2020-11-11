@@ -53,6 +53,16 @@ namespace AlterEgo.Infrastructure.Contexts
                 .HasOne(x => x.SourceImage)
                 .WithMany()
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AnimationTask>()
+                .HasOne(x => x.SourceVideo)
+                .WithMany()
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AnimationTask>()
+                .HasOne(x => x.ResultAnimation)
+                .WithMany()
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

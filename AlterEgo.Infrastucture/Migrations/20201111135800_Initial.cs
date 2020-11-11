@@ -117,7 +117,7 @@ namespace AlterEgo.Infrastructure.Migrations
                         column: x => x.SourceVideoFilename,
                         principalTable: "DrivingVideos",
                         principalColumn: "Filename",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_AnimationTasks_Images_SourceImageFilename",
                         column: x => x.SourceImageFilename,
@@ -129,7 +129,7 @@ namespace AlterEgo.Infrastructure.Migrations
                         column: x => x.ResultAnimationFilename,
                         principalTable: "ResultVideos",
                         principalColumn: "Filename",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_AnimationTasks_Users_OwnerLogin",
                         column: x => x.OwnerLogin,

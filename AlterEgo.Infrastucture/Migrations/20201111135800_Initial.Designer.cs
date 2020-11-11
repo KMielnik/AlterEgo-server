@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlterEgo.Infrastructure.Migrations
 {
     [DbContext(typeof(AlterEgoContext))]
-    [Migration("20201111132453_Initial")]
+    [Migration("20201111135800_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,7 +196,8 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.HasOne("AlterEgo.Core.Domains.ResultVideo", "ResultAnimation")
                         .WithMany()
-                        .HasForeignKey("ResultAnimationFilename");
+                        .HasForeignKey("ResultAnimationFilename")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AlterEgo.Core.Domains.Image", "SourceImage")
                         .WithMany()
@@ -205,7 +206,8 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.HasOne("AlterEgo.Core.Domains.DrivingVideo", "SourceVideo")
                         .WithMany()
-                        .HasForeignKey("SourceVideoFilename");
+                        .HasForeignKey("SourceVideoFilename")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Owner");
 

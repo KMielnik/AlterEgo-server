@@ -194,7 +194,8 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.HasOne("AlterEgo.Core.Domains.ResultVideo", "ResultAnimation")
                         .WithMany()
-                        .HasForeignKey("ResultAnimationFilename");
+                        .HasForeignKey("ResultAnimationFilename")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AlterEgo.Core.Domains.Image", "SourceImage")
                         .WithMany()
@@ -203,7 +204,8 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.HasOne("AlterEgo.Core.Domains.DrivingVideo", "SourceVideo")
                         .WithMany()
-                        .HasForeignKey("SourceVideoFilename");
+                        .HasForeignKey("SourceVideoFilename")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Owner");
 
