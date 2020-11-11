@@ -27,7 +27,7 @@ namespace AlterEgo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Filename = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OriginalFilename = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OriginalFilename = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OwnerLogin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlannedDeletion = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -51,7 +51,7 @@ namespace AlterEgo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Filename = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OriginalFilename = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OriginalFilename = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OwnerLogin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlannedDeletion = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -75,14 +75,14 @@ namespace AlterEgo.Infrastructure.Migrations
                 columns: table => new
                 {
                     Filename = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OriginalFilename = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsFinished = table.Column<bool>(type: "bit", nullable: false),
+                    OriginalFilename = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OwnerLogin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PlannedDeletion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ActualDeletion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Thumbnail = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    PlannedLifetime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    IsFinished = table.Column<bool>(type: "bit", nullable: false)
+                    PlannedLifetime = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,7 +123,7 @@ namespace AlterEgo.Infrastructure.Migrations
                         column: x => x.SourceImageFilename,
                         principalTable: "Images",
                         principalColumn: "Filename",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_AnimationTasks_ResultVideos_ResultAnimationFilename",
                         column: x => x.ResultAnimationFilename,

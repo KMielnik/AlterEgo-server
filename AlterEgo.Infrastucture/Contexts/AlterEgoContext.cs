@@ -48,6 +48,11 @@ namespace AlterEgo.Infrastructure.Contexts
 
             modelBuilder.Entity<AnimationTask>()
                 .HasKey(x => x.Id);
+
+            modelBuilder.Entity<AnimationTask>()
+                .HasOne(x => x.SourceImage)
+                .WithMany()
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

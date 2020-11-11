@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlterEgo.Infrastructure.Migrations
 {
     [DbContext(typeof(AlterEgoContext))]
-    [Migration("20200816174052_Initial")]
+    [Migration("20201111132453_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace AlterEgo.Infrastructure.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0-preview.7.20365.15");
+                .HasAnnotation("ProductVersion", "5.0.0-rc.1.20451.13");
 
             modelBuilder.Entity("AlterEgo.Core.Domains.AnimationTask", b =>
                 {
@@ -75,6 +75,9 @@ namespace AlterEgo.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("OriginalFilename")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("OwnerLogin")
                         .HasColumnType("nvarchar(450)");
 
@@ -104,6 +107,9 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("OriginalFilename")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerLogin")
                         .HasColumnType("nvarchar(450)");
@@ -137,6 +143,9 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.Property<bool>("IsFinished")
                         .HasColumnType("bit");
+
+                    b.Property<string>("OriginalFilename")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerLogin")
                         .HasColumnType("nvarchar(450)");
@@ -191,11 +200,20 @@ namespace AlterEgo.Infrastructure.Migrations
 
                     b.HasOne("AlterEgo.Core.Domains.Image", "SourceImage")
                         .WithMany()
-                        .HasForeignKey("SourceImageFilename");
+                        .HasForeignKey("SourceImageFilename")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AlterEgo.Core.Domains.DrivingVideo", "SourceVideo")
                         .WithMany()
                         .HasForeignKey("SourceVideoFilename");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("ResultAnimation");
+
+                    b.Navigation("SourceImage");
+
+                    b.Navigation("SourceVideo");
                 });
 
             modelBuilder.Entity("AlterEgo.Core.Domains.DrivingVideo", b =>
@@ -203,6 +221,8 @@ namespace AlterEgo.Infrastructure.Migrations
                     b.HasOne("AlterEgo.Core.Domains.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerLogin");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("AlterEgo.Core.Domains.Image", b =>
@@ -210,6 +230,8 @@ namespace AlterEgo.Infrastructure.Migrations
                     b.HasOne("AlterEgo.Core.Domains.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerLogin");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("AlterEgo.Core.Domains.ResultVideo", b =>
@@ -217,6 +239,8 @@ namespace AlterEgo.Infrastructure.Migrations
                     b.HasOne("AlterEgo.Core.Domains.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerLogin");
+
+                    b.Navigation("Owner");
                 });
 #pragma warning restore 612, 618
         }
