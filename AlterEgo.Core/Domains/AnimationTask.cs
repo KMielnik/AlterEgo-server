@@ -59,7 +59,7 @@ namespace AlterEgo.Core.Domains
         {
             if (imagePadding < 0 || imagePadding > 1)
                 throw new ArgumentException($"Image padding should be between 0.0 and 1.0 (was {imagePadding})", nameof(imagePadding));
-            ImagePadding = ImagePadding;
+            ImagePadding = imagePadding;
         }
 
         private void SetOwner(User owner)

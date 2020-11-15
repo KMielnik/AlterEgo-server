@@ -36,6 +36,25 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
 
             cancellationToken.Register(() => _logger.LogDebug("Animation tasks service is stopping"));
 
+            _logger.LogDebug("Clearning up \"Processing tasks\" from previous run");
+
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var _tasksRepository = scope.ServiceProvider.GetRequiredService<IAnimationTaskRepository>();
+                var brokenTasks = await _tasksRepository
+                   .GetAllAsync()
+                   .Where(t => t.Status == AnimationTask.Statuses.Processing)
+                   .ToListAsync();
+
+                foreach (var task in brokenTasks)
+                {
+                    task.SetStatusFailed();
+
+                    await _tasksRepository.UpdateAsync(task);
+                }
+
+            }
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 using (var scope = _scopeFactory.CreateScope())

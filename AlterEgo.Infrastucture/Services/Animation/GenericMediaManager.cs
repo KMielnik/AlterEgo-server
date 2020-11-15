@@ -113,7 +113,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
                 OriginalFilename = item.OriginalFilename,
                 UserLogin = item.Owner.Login,
                 ExistsUntill = item.PlannedDeletion,
-                IsAvailable = item.ActualDeletion is null,
+                IsAvailable = item.ActualDeletion is null && item.Thumbnail != null,
                 Thumbnail = includeThumbnails ? item.Thumbnail : null
             };
 
@@ -170,7 +170,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             var filepath = Path.Combine(_filesLocationPath, fileForDeletion.Filename);
 
-            if(File.Exists(filepath))
+            if (File.Exists(filepath))
                 File.Delete(filepath);
 
             if (fileForDeletion is DrivingVideo)
@@ -194,6 +194,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             var medias = _mediaRepository.GetAllAsync()
                 .Where(x => x.Owner.Login == userLogin)
+                .Where(x => x.Thumbnail != null)
                 .OrderByDescending(x => x.PlannedDeletion);
 
             await foreach (var media in medias)

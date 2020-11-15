@@ -154,8 +154,27 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                         try
                         {
                             _logger.LogTrace("CoreAnimator received outputline: {Line}", e.Data);
-                            var outputEvent = JsonSerializer.Deserialize<OutputEvent>(e.Data);
-                            eventsQueue.Enqueue(outputEvent);
+                            if (e.Data.StartsWith("{"))
+                            {
+                                var outputEvent = JsonSerializer.Deserialize<OutputEvent>(e.Data);
+                                eventsQueue.Enqueue(outputEvent);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Returned non-JSON output: {Output}", e.Data);
+                                eventsQueue.Enqueue(
+                                    new OutputEvent
+                                    {
+                                        EventType = new EventType
+                                        {
+                                            IsError = true,
+                                            Name = nameof(EventType.ERROR_ANIMATING_VIDEO),
+                                            Text = EventType.ERROR_ANIMATING_VIDEO
+                                        },
+                                        Time = 0,
+                                        Filename = "{fail}"
+                                    });
+                            }
                         }
                         catch (JsonException ex)
                         {
@@ -227,10 +246,11 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
             public const string ERROR_OPENING_VIDEO = "ERROR_OPENING_VIDEO";
             public const string ERROR_OPENING_MODEL = "ERROR_OPENING_MODEL";
             public const string ERROR_ARGUMENT_PARSING = "ERROR_ARGUMENT_PARSING";
+            public const string ERROR_ANIMATING_VIDEO = "ERROR_ANIMATING_VIDEO";
             #endregion
 
             public override string ToString()
-                => $"EventType: {{IsError:{IsError}, Time:{Name}, Filename:{Text}}}";
+                => $"EventType: {{IsError:{IsError}, Name:{Name}, Text:{Text}}}";
         }
 
         public class AnimationCommandBuilder : IEnviromentBuilder, IOptionsCommandBuilder
