@@ -162,18 +162,7 @@ namespace AlterEgo.Infrastructure.Services.Animation.BackgroundServices
                             else
                             {
                                 _logger.LogWarning("Returned non-JSON output: {Output}", e.Data);
-                                eventsQueue.Enqueue(
-                                    new OutputEvent
-                                    {
-                                        EventType = new EventType
-                                        {
-                                            IsError = true,
-                                            Name = nameof(EventType.ERROR_ANIMATING_VIDEO),
-                                            Text = EventType.ERROR_ANIMATING_VIDEO
-                                        },
-                                        Time = 0,
-                                        Filename = "{fail}"
-                                    });
+
                             }
                         }
                         catch (JsonException ex)
