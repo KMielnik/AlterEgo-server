@@ -22,7 +22,7 @@ namespace AlterEgo.Infrastructure.Services.Animation
     {
         private readonly IGenericMediaRepository<T> _mediaRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IThumbnailGenerator _thumbnailGenerator;
+        private readonly IMediaEncoder _mediaEncoder;
 
         private readonly string _filesLocationPath;
         private readonly string _tempLocationPath;
@@ -33,14 +33,14 @@ namespace AlterEgo.Infrastructure.Services.Animation
             IUserRepository userRepository,
             string filesLocationPath,
             ILogger<GenericMediaManager<T>> logger,
-            IThumbnailGenerator thumbnailGenerator,
+            IMediaEncoder mediaEncoder,
             string tempLocationPath = null)
         {
             _mediaRepository = mediaRepository;
             _userRepository = userRepository;
             _filesLocationPath = filesLocationPath;
             _logger = logger;
-            _thumbnailGenerator = thumbnailGenerator;
+            _mediaEncoder = mediaEncoder;
 
             _tempLocationPath = tempLocationPath;
         }
@@ -137,9 +137,16 @@ namespace AlterEgo.Infrastructure.Services.Animation
 
             _logger.LogDebug("Saved {MediaType} {Filename}", typeof(T), newFilename);
 
+            if (typeof(T) != typeof(Image))
+            {
+                _logger.LogDebug("Reencoding file");
+
+                newPath = await _mediaEncoder.ReencodeMedia(newPath);
+            }
+
             _logger.LogDebug("Generationg thumbnail.");
 
-            var thumbnail = await _thumbnailGenerator.GetThumbnailAsync(newPath);
+            var thumbnail = await _mediaEncoder.GetThumbnailAsync(newPath);
 
             _logger.LogDebug("Thumbnail generated.");
 

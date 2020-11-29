@@ -21,12 +21,12 @@ namespace AlterEgo.Infrastructure.Services.Animation
             IDrivingVideoRepository drivingVideoRepository,
             IUserRepository userRepository,
             ILogger<DrivingVideoManagerService> logger,
-            IThumbnailGenerator thumbnailGenerator)
+            IMediaEncoder mediaEncoder)
             : base(drivingVideoRepository,
                   userRepository,
                   filesLocationSettings.Value.VideosDirectory,
                   logger,
-                  thumbnailGenerator,
+                  mediaEncoder,
                   filesLocationSettings.Value.TempDirectory)
         { }
     }

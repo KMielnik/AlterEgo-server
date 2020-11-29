@@ -15,14 +15,14 @@ using System.Drawing.Imaging;
 
 namespace AlterEgo.Infrastructure.Services.Animation
 {
-    public class ThumbnailGenerator : IThumbnailGenerator
+    public class MediaEncoder : IMediaEncoder
     {
-        private readonly ILogger<ThumbnailGenerator> _logger;
+        private readonly ILogger<MediaEncoder> _logger;
         private readonly FFmpegSettings _ffmpegSettings;
         private Engine _ffmpeg;
 
-        public ThumbnailGenerator(
-            ILogger<ThumbnailGenerator> logger,
+        public MediaEncoder(
+            ILogger<MediaEncoder> logger,
             IOptions<FFmpegSettings> ffmpegSettings)
         {
             _logger = logger;
@@ -171,6 +171,17 @@ namespace AlterEgo.Infrastructure.Services.Animation
             _logger.LogDebug("Transferred thumbnail to byte array and deleted the temp file.");
 
             return thumbnailByteArray;
+        }
+
+        public async Task<string> ReencodeMedia(string filePath)
+        {
+            var tempFilePath = Path.Join(Path.GetTempPath(), Path.GetFileName(filePath));
+
+            await _ffmpeg.ExecuteAsync($" -i {filePath} {tempFilePath}");
+
+            File.Move(tempFilePath, filePath, true);
+
+            return filePath;
         }
     }
 }

@@ -81,7 +81,7 @@ namespace AlterEgo.Infrastructure
 
             services.AddDbContext<AlterEgoContext>();
 
-            services.AddSingleton<IThumbnailGenerator, ThumbnailGenerator>();
+            services.AddSingleton<IMediaEncoder, MediaEncoder>();
 
             services.AddScoped<IImageManagerService, ImageManagerService>()
                 .AddScoped<IDrivingVideoManagerService, DrivingVideoManagerService>()

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace AlterEgo.Core.Interfaces.Animation
 {
-    public interface IThumbnailGenerator
+    public interface IMediaEncoder
     {
         Task<byte[]> GetThumbnailAsync(string filepath);
+        Task<string> ReencodeMedia(string filePath);
     }
 }
