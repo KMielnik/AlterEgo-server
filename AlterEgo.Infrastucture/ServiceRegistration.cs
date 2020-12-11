@@ -1,4 +1,6 @@
-﻿using AlterEgo.Core.Interfaces.Animation;
+﻿using System;
+using System.IO;
+using AlterEgo.Core.Interfaces.Animation;
 using AlterEgo.Core.Interfaces.Identity;
 using AlterEgo.Core.Interfaces.Repositories;
 using AlterEgo.Core.Settings;
@@ -9,6 +11,8 @@ using AlterEgo.Infrastructure.Services;
 using AlterEgo.Infrastructure.Services.Animation;
 using AlterEgo.Infrastructure.Services.Animation.BackgroundServices;
 using AlterEgo.Infrastructure.Services.Identity;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -89,11 +93,23 @@ namespace AlterEgo.Infrastructure
 
             services.AddScoped<IAnimationTaskService, AnimationTaskService>();
 
-            services.AddScoped<IUserNotifierService, FakeUserNotifierService>();
+            if (File.Exists(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS")))
+            {
+                FirebaseApp.Create(new AppOptions
+                {
+                    Credential = GoogleCredential.GetApplicationDefault(),
+                });
+                services.AddScoped<IUserNotifierService, FCMUserNotifierService>();
+
+            }
+            else
+                services.AddScoped<IUserNotifierService, FakeUserNotifierService>();
 
             services.AddHostedService<AnimationTasksProcessorService>();
 
             services.AddHostedService<ExpiredFilesCleanerService>();
+
+
         }
     }
 }
